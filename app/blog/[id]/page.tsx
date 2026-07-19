@@ -1,0 +1,97 @@
+'use client';
+import { use, useEffect, useState } from 'react';
+import { getDoc, doc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import { BlogPost } from '@/lib/types';
+import { FALLBACK_BLOG } from '@/lib/fallbackBlog';
+import Image from 'next/image';
+import FadeIn from '@/components/FadeIn';
+import Footer from '@/components/Footer';
+
+function isVideoUrl(url: string) {
+  return /\.(mp4|webm|mov)$/i.test(url);
+}
+
+export default function BlogPostDetalle({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
+  const [post, setPost] = useState<BlogPost | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPost = async () => {
+      try {
+        const snap = await getDoc(doc(db, 'blogPosts', id));
+        if (snap.exists()) {
+          setPost({ id: snap.id, ...snap.data() } as BlogPost);
+        } else {
+          throw new Error('not found');
+        }
+      } catch {
+        const fallback = FALLBACK_BLOG.find(p => p.id === id);
+        if (fallback) setPost(fallback);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPost();
+  }, [id]);
+
+  if (loading) return (
+    <main style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <p style={{ fontFamily: 'var(--font)', color: 'var(--text-muted)' }}>Cargando...</p>
+    </main>
+  );
+
+  if (!post) return (
+    <main style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <p style={{ fontFamily: 'var(--font)', color: 'var(--text-muted)' }}>Nota no encontrada.</p>
+    </main>
+  );
+
+  return (
+    <main style={{ background: '#fff' }}>
+      <section className="hr-section" style={{ padding: '200px 79px 0', maxWidth: 1000, margin: '0 auto' }}>
+        <FadeIn>
+          <p style={{ fontFamily: 'var(--font)', fontWeight: 400, fontSize: 14, color: 'var(--text-muted)', marginBottom: 12 }}>{post.date}</p>
+          <h1 style={{ fontFamily: 'var(--font)', fontWeight: 500, fontSize: 45, lineHeight: '52px', marginBottom: 40 }}>{post.title}</h1>
+        </FadeIn>
+
+        {post.coverImage && (
+          <FadeIn>
+            <div style={{ position: 'relative', width: '100%', aspectRatio: '4 / 3', borderRadius: 24, overflow: 'hidden', marginBottom: 40 }}>
+              <Image src={post.coverImage} alt={post.title} fill style={{ objectFit: 'cover' }} />
+            </div>
+          </FadeIn>
+        )}
+
+        <FadeIn>
+          <div style={{ fontFamily: 'var(--font)', fontWeight: 300, fontSize: 18, lineHeight: '28px', whiteSpace: 'pre-wrap', marginBottom: 48 }}>
+            {post.content}
+          </div>
+        </FadeIn>
+
+        {post.gallery.filter(url => url !== post.coverImage).length > 0 && (
+          <div className="hr-blog-gallery" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 64 }}>
+            {post.gallery.filter(url => url !== post.coverImage).map((url, i) => (
+              <div key={i} style={{ position: 'relative', width: '100%', aspectRatio: '4 / 3', borderRadius: 16, overflow: 'hidden' }}>
+                {isVideoUrl(url)
+                  ? <video src={url} controls style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  : <Image src={url} alt="" fill style={{ objectFit: 'cover' }} />
+                }
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <Footer minimal />
+
+      <style>{`
+        @media (max-width: 900px) {
+          .hr-section { padding: 120px 20px 0 !important; }
+          .hr-blog-gallery { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
+    </main>
+  );
+}

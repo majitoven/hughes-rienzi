@@ -1,0 +1,104 @@
+/* Inter (Google Fonts, OFL license) — downloaded from github.com/google/fonts, self-hosted */
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter.ttf') format('truetype-variations');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-Italic.ttf') format('truetype-variations');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+:root {
+  --black: #141414;
+  --white: #ffffff;
+  --gray: #F4F4F4;
+  --gray-border: #E5E5E5;
+  --text-muted: rgba(20,20,20,0.55);
+  --accent: #141414;
+  --font: 'Inter', -apple-system, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; overflow-x: hidden; }
+
+body {
+  font-family: var(--font);
+  background: var(--white);
+  color: var(--black);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+a { text-decoration: none; color: inherit; }
+a:focus, a:focus-visible, button:focus, button:focus-visible { outline: none; }
+img { max-width: 100%; display: block; }
+button { cursor: pointer; font-family: var(--font); }
+input, textarea { font-family: var(--font); }
+
+@media (max-width: 768px) {
+  section { padding-left: 20px !important; padding-right: 20px !important; }
+}
+
+::selection { background: var(--black); color: #fff; }
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--gray); }
+::-webkit-scrollbar-thumb { background: var(--black); border-radius: 3px; }
+
+/* ArrowButton — split pill with the arrow circle inset inside it */
+.hr-abtn {
+  display: inline-flex; align-items: center; gap: 10px;
+  border-radius: 999px; padding: 6px 6px 6px 22px;
+  cursor: pointer; text-decoration: none; font-family: var(--font);
+  transition: background 0.3s, color 0.3s, border-color 0.3s;
+}
+.hr-abtn-label { font-weight: 500; letter-spacing: 0; white-space: nowrap; }
+.hr-abtn-circle {
+  width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: background 0.3s;
+}
+.hr-abtn-circle img { transition: filter 0.3s; }
+
+.hr-abtn--dark, .hr-abtn--light { background: var(--black); color: #fff; border: 1px solid var(--black); }
+.hr-abtn--dark .hr-abtn-circle, .hr-abtn--light .hr-abtn-circle { background: #fff; }
+.hr-abtn--light { background: transparent; border: 1px solid rgba(255,255,255,0.5); }
+
+.hr-abtn--dark:hover { background: transparent; color: var(--black); }
+.hr-abtn--dark:hover .hr-abtn-circle { background: var(--black); }
+.hr-abtn--dark:hover .hr-abtn-circle img { filter: invert(1); }
+
+.hr-abtn--light:hover { background: #fff; color: var(--black); }
+.hr-abtn--light:hover .hr-abtn-circle { background: var(--black); }
+.hr-abtn--light:hover .hr-abtn-circle img { filter: invert(1); }
+
+.hr-abtn--white { background: #fff; color: var(--black); border: 1px solid #fff; }
+.hr-abtn--white .hr-abtn-circle { background: var(--black); }
+.hr-abtn--white .hr-abtn-circle img { filter: invert(1); }
+.hr-abtn--white:hover { background: var(--black); color: #fff; }
+.hr-abtn--white:hover .hr-abtn-circle { background: #fff; }
+.hr-abtn--white:hover .hr-abtn-circle img { filter: none; }
+
+/* ArrowButton — plain (bordered, non-split) variant */
+.hr-abtn-plain {
+  display: inline-flex; align-items: center; gap: 12px;
+  border-radius: 999px; padding: 9px 18px; font-weight: 500;
+  cursor: pointer; text-decoration: none; font-family: var(--font);
+  transition: background 0.3s, color 0.3s;
+}
+.hr-abtn-plain-circle {
+  width: 24px; height: 24px; border-radius: 50%; border: 1px solid currentColor;
+  display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.hr-abtn-plain--dark { color: var(--black); border: 1px solid var(--black); }
+.hr-abtn-plain--dark:hover { background: var(--black); color: #fff; }
+.hr-abtn-plain--light { color: #fff; border: 1px solid rgba(255,255,255,0.5); }
+.hr-abtn-plain--light:hover { background: #fff; color: var(--black); }
+.hr-abtn-plain--white { color: var(--black); border: 1px solid #fff; background: #fff; }
+.hr-abtn-plain--white:hover { background: var(--black); color: #fff; }
