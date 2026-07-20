@@ -23,7 +23,7 @@ export default function FadeIn({ children, delay = 0, direction = 'up', style }:
     left: 'translateX(28px)',
     right: 'translateX(-28px)',
     none: 'none',
-  }[direction];
+  }[direction]; 
 
   return (
     <div ref={ref} style={{
