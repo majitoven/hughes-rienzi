@@ -129,6 +129,11 @@ export default function Home() {
                       <p style={{ fontFamily: 'var(--font)', fontWeight: 700, fontSize: 18, letterSpacing: '0.04em' }}>{p.title.toUpperCase()}</p>
                     )}
                   </div>
+                  {p.location && (
+                    <div style={{ position: 'absolute', top: 20, right: 20, background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(6px)', color: '#fff', borderRadius: 999, padding: '6px 14px', fontFamily: 'var(--font)', fontSize: 12 }}>
+                      📍 {p.location}
+                    </div>
+                  )}
                   <p style={{ position: 'absolute', bottom: 20, left: 20, color: '#fff', fontFamily: 'var(--font)', fontWeight: 500, fontSize: 16 }}>
                     {p.title} {p.subtitle}
                   </p>

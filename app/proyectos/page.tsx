@@ -63,7 +63,7 @@ export default function Proyectos() {
                   <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0) 30%)' }} />
                   <div style={{ position: 'absolute', top: 20, left: 20, display: 'flex', alignItems: 'center', gap: 10, color: '#fff' }}>
                     {p.logoImage ? (
-                      <Image src={p.logoImage} alt={p.title} width={268} height={116} style={{ width: 'auto', height: 44, objectFit: 'contain' }} />
+                      <Image src={p.logoImage} alt={p.title} width={268} height={116} style={{ width: 'auto', height: 24, objectFit: 'contain' }} />
                     ) : (
                       <>
                         <p style={{ fontFamily: 'var(--font)', fontWeight: 700, fontSize: 16, letterSpacing: '0.04em' }}>{p.title.toUpperCase()}</p>
@@ -75,7 +75,7 @@ export default function Proyectos() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
                   <p style={{ fontFamily: 'var(--font)', fontWeight: 500, fontSize: 35, lineHeight: '28px', color: 'var(--black)' }}>
                     {p.title} {p.subtitle}
-                    {p.location && <span style={{ color: 'rgba(20,20,20,0.4)', fontWeight: 500 }}> &nbsp; {p.location}</span>}
+                    {p.location && <span style={{ color: 'rgba(20,20,20,0.4)', fontWeight: 400, fontSize: 18 }}> &nbsp; {p.location}</span>}
                   </p>
                   <span style={{ width: 17, height: 17, flexShrink: 0, display: 'inline-block', position: 'relative' }}>
                     <Image src="/images/proyectos/arrowgray.png" alt="" fill style={{ objectFit: 'contain' }} />
