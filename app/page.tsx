@@ -101,8 +101,11 @@ export default function Home() {
                 )}
               </div>
               {main.location && (
-                <div style={{ position: 'absolute', top: 32, right: 32, background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(6px)', color: '#fff', borderRadius: 999, padding: '8px 16px', fontFamily: 'var(--font)', fontSize: 13 }}>
-                  📍 {main.location}
+                <div style={{ position: 'absolute', top: 32, right: 32, display: 'flex', alignItems: 'center', gap: 6, background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(6px)', color: '#fff', borderRadius: 999, padding: '8px 16px', fontFamily: 'var(--font)', fontSize: 13 }}>
+                  <span style={{ width: 12, height: 15, position: 'relative', flexShrink: 0 }}>
+                    <Image src="/images/proyectos/pin.png" alt="" fill style={{ objectFit: 'contain', filter: 'invert(1)' }} />
+                  </span>
+                  {main.location}
                 </div>
               )}
               <div className="hr-main-card-footer" style={{ position: 'absolute', bottom: 32, left: 32, right: 32, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 20 }}>
@@ -130,8 +133,11 @@ export default function Home() {
                     )}
                   </div>
                   {p.location && (
-                    <div style={{ position: 'absolute', top: 20, right: 20, background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(6px)', color: '#fff', borderRadius: 999, padding: '6px 14px', fontFamily: 'var(--font)', fontSize: 12 }}>
-                      📍 {p.location}
+                    <div style={{ position: 'absolute', top: 20, right: 20, display: 'flex', alignItems: 'center', gap: 5, background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(6px)', color: '#fff', borderRadius: 999, padding: '6px 14px', fontFamily: 'var(--font)', fontSize: 12 }}>
+                      <span style={{ width: 10, height: 13, position: 'relative', flexShrink: 0 }}>
+                        <Image src="/images/proyectos/pin.png" alt="" fill style={{ objectFit: 'contain', filter: 'invert(1)' }} />
+                      </span>
+                      {p.location}
                     </div>
                   )}
                   <p style={{ position: 'absolute', bottom: 20, left: 20, color: '#fff', fontFamily: 'var(--font)', fontWeight: 500, fontSize: 16 }}>
