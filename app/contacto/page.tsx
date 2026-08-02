@@ -50,12 +50,12 @@ export default function Contacto() {
     <main style={{ background: '#fff' }}>
       <div className="hr-section" style={{ maxWidth: 1440, margin: '0 auto', paddingTop: 200, paddingBottom: 96, paddingLeft: 79, paddingRight: 79 }}>
         <FadeIn>
-          <h1 style={{ fontFamily: 'var(--font)', fontWeight: 500, fontSize: 65, marginBottom: 64 }}>¡Contactanos!</h1>
+          <h1 style={{ fontFamily: 'var(--font)', fontWeight: 500, fontSize: 65, marginBottom: 64 }}>Contactanos!</h1>
         </FadeIn>
 
         <div className="hr-contact-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 80 }}>
           <FadeIn direction="right">
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 32, maxWidth: 480 }}>
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 32, width: '100%' }}>
               <div>
                 <p style={label}>Nombre y Apellido*</p>
                 <input required value={form.nombre} onChange={e => setForm(f => ({ ...f, nombre: e.target.value }))} style={inp} />

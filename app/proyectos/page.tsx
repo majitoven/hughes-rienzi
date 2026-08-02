@@ -35,12 +35,10 @@ export default function Proyectos() {
     <main style={{ background: '#fff' }}>
       <section className="hr-section" style={{ padding: '200px 79px 120px', maxWidth: 1440, margin: '0 auto' }}>
         <FadeIn>
-          <h1 style={{ fontFamily: 'var(--font)', fontWeight: 500, fontSize: 65, lineHeight: '64px', marginBottom: 20 }}>
-            Nuestros Proyectos
+          <h1 style={{ fontFamily: 'var(--font)', fontWeight: 500, fontSize: 65, lineHeight: '64px', marginBottom: 68 }}>
+            Proyectos
           </h1>
-          <p style={{ fontFamily: 'var(--font)', fontWeight: 400, fontSize: 24, lineHeight: '28px', color: 'var(--text-muted)', marginBottom: 48 }}>
-            En Grupo Hughes &amp; Rienzi estamos constantemente<br />imaginando nuevas formas de vivir.
-          </p>
+  
         </FadeIn>
 
         <div style={{ display: 'flex', gap: 56, marginBottom: 56 }}>

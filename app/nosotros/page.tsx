@@ -47,7 +47,7 @@ export default function Nosotros() {
         <FadeIn>
           <div className="hr-quote-card" style={{ background: "var(--gray)", borderRadius: 24, padding: 16, marginTop: 64, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 131, alignItems: "center" }}>
             <div style={{ position: "relative", width: "100%", aspectRatio: "585 / 414", borderRadius: 57, overflow: "hidden" }}>
-              <Image src="/images/nosotros/equipo.png" alt="Equipo Grupo Hughes & Rienzi" fill style={{ objectFit: "cover" }} />
+              <Image src="/images/nosotros/equipo.jpg" alt="Equipo Grupo Hughes & Rienzi" fill style={{ objectFit: "cover" }} />
             </div>
             <p style={{ fontFamily: "var(--font)", fontWeight: 500, fontSize: 28, lineHeight: "36px", color: "var(--black)" }}>
               Frase del equipo tipo &ldquo;quote&rdquo;

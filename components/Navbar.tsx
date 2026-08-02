@@ -44,7 +44,7 @@ export default function Navbar() {
         <Link href="/" style={{ display: 'flex' }}>
           <Image
             src={dark ? '/images/home/Logo_GRUPO_BLANCOseccionitau.png' : '/images/home/logoheader.png'}
-            alt="Grupo Hughes & Rienzi" width={135} height={137} className="hr-nav-logo" />
+            alt="Grupo Hughes & Rienzi" width={135} height={137} className="hr-nav-logo" priority />
         </Link>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 40 }}>

@@ -2,12 +2,11 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import ArrowButton from './ArrowButton';
 
 const SOCIALS = [
   { label: 'Instagram', href: 'https://www.instagram.com/grupo_hughesyrienzi/' },
   { label: 'Linkedin', href: 'https://www.linkedin.com/company/grupo-hughes-rienzi/' },
-  { label: 'Facebook', href: 'https://www.facebook.com/people/Grupo-HughesRienzi/61556897146673/' },
+  { label: 'Youtube', href: 'https://www.youtube.com/@hughesrienzibienesraices7679' },
 ];
 
 const NAV_LINKS = [
@@ -48,21 +47,6 @@ export default function Footer({ minimal = false }: { minimal?: boolean }) {
         </div>
       )}
 
-      {!minimal && (
-        <div className="footer-cta" style={{
-          background: '#181717', color: '#fff', textAlign: 'center',
-          maxWidth: 1300, margin: '64px auto 0', borderRadius: 24, padding: '80px 48px',
-        }}>
-          <h2 className="hr-footer-title" style={{ fontFamily: 'var(--font)', fontWeight: 500, fontSize: 65, lineHeight: '67px', marginBottom: 16 }}>
-            Contactate con nosotros
-          </h2>
-          <p style={{ fontFamily: 'var(--font)', fontWeight: 400, fontSize: 24, lineHeight: '28px', color: 'rgba(255,255,255,0.7)', marginBottom: 32 }}>
-            Envianos tu consulta o hacenos llegar tus sugerencias.
-          </p>
-          <ArrowButton href="/contacto" variant="light" split>Enviar consulta</ArrowButton>
-        </div>
-      )}
-
       <div className="footer-inner" style={{
         background: '#fff', color: 'var(--black)',
         padding: '64px 64px 32px',
@@ -88,7 +72,10 @@ export default function Footer({ minimal = false }: { minimal?: boolean }) {
             </nav>
 
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 20 }} className="footer-right">
-              <Image src="/images/home/logohughesfooter.svg" alt="Hughes & Rienzi Bienes Raíces" width={220} height={54} style={{ objectFit: 'contain' }} />
+              <p style={{ fontFamily: 'var(--font)', fontWeight: 500, fontSize: 12, letterSpacing: '0.08em', color: 'var(--text-muted)' }}>
+                COMERCIALIZA EN EXCLUSIVIDAD
+              </p>
+              <Image src="/images/home/logohughesfooter.svg" alt="Hughes & Rienzi Bienes Raíces" width={220} height={54} style={{ objectFit: 'contain', marginTop: -12 }} />
 
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8 }}>
                 {SOCIALS.map(s => (
@@ -106,30 +93,34 @@ export default function Footer({ minimal = false }: { minimal?: boolean }) {
                 {subscribed ? (
                   <p style={{ fontFamily: 'var(--font)', fontSize: 13, color: 'var(--black)' }}>¡Gracias por suscribirte!</p>
                 ) : (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, borderBottom: '1px solid rgba(20,20,20,0.25)', paddingBottom: 6 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, border: '1px solid var(--black)', borderRadius: 999, padding: '8px 8px 8px 20px' }}>
                     <input type="email" required placeholder="nombre@mail.com" value={email}
                       onChange={e => setEmail(e.target.value)}
-                      style={{ flex: 1, background: 'transparent', border: 'none', outline: 'none', color: 'var(--black)', fontFamily: 'var(--font)', fontSize: 14 }} />
-                    <button type="submit" aria-label="Suscribirse" style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
-                      <MiniArrow />
+                      style={{ flex: 1, background: 'transparent', border: 'none', outline: 'none', color: 'var(--black)', fontFamily: 'var(--font)', fontSize: 14, minWidth: 0 }} />
+                    <button type="submit" aria-label="Suscribirse" style={{
+                      width: 32, height: 32, borderRadius: '50%', background: 'var(--black)', flexShrink: 0,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', cursor: 'pointer', padding: 0,
+                    }}>
+                      <Image src="/images/home/arrowwhite.png" alt="" width={12} height={12} />
                     </button>
                   </div>
                 )}
               </form>
             </div>
           </div>
-
-          <p style={{ textAlign: 'center', fontSize: 11, color: 'var(--text-muted)', marginTop: 48 }}>
-            © Copyright Grupo Hughes &amp; Rienzi 2026
-          </p>
         </div>
+      </div>
+
+      <div style={{ background: 'var(--black)', padding: '16px 24px' }}>
+        <p style={{ textAlign: 'center', fontSize: 11, color: 'rgba(255,255,255,0.6)' }}>
+          © Copyright Grupo Hughes &amp; Rienzi 2026
+        </p>
       </div>
 
       <style>{`
         @media (max-width: 768px) {
           .hr-proyectos-section { padding: 48px 20px 0 !important; }
           .footer-inner { padding: 48px 20px 24px !important; }
-          .footer-cta { padding: 48px 24px !important; margin-top: 40px !important; border-radius: 16px !important; }
           .hr-footer-title { font-size: 34px !important; line-height: 40px !important; }
           .footer-cols { grid-template-columns: 1fr !important; gap: 32px !important; }
           .footer-right { align-items: flex-start !important; }

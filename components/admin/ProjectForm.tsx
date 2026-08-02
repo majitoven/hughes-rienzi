@@ -15,8 +15,9 @@ const TEMPLATE_FACTS: ProjectFact[] = [
   { id: '1', label: 'Ubicación', value: '' },
   { id: '2', label: 'Estado', value: '' },
   { id: '3', label: 'Año', value: '' },
-  { id: '4', label: 'Bloques', value: '' },
-  { id: '5', label: 'Terreno', value: '' },
+  { id: '4', label: 'Cantidad de unidades', value: '' },
+  { id: '5', label: 'Tipología', value: '' },
+  { id: '6', label: 'Terreno', value: '' },
 ];
 
 const f: React.CSSProperties = { fontFamily: 'var(--font)' };
@@ -76,6 +77,7 @@ export default function ProjectForm({ initialData, projectId, onSave, saving }: 
   const [location, setLocation] = useState(initialData?.location ?? '');
   const [status, setStatus] = useState(initialData?.status ?? '');
   const [featured, setFeatured] = useState(initialData?.featured ?? false);
+  const [featuredSize, setFeaturedSize] = useState<'large' | 'small'>(initialData?.featuredSize ?? 'small');
 
   const [coverUrl, setCoverUrl] = useState(initialData?.coverImage ?? '');
   const [coverUploading, setCoverUploading] = useState(false);
@@ -211,6 +213,7 @@ export default function ProjectForm({ initialData, projectId, onSave, saving }: 
 
     await onSave({
       title, subtitle, location, status, featured,
+      ...(featured ? { featuredSize } : {}),
       coverImage: coverUrl,
       heroImage: heroUrl,
       logoImage: logoUrl,
@@ -256,6 +259,23 @@ export default function ProjectForm({ initialData, projectId, onSave, saving }: 
               Mostrar en Proyectos Destacados (home)
             </label>
           </div>
+          {featured && (
+            <div>
+              <label style={{ ...labelStyle, display: 'flex', alignItems: 'center', gap: 6 }}>
+                Tamaño en destacados
+                <span title="Los proyectos 'Grande' se muestran a ancho completo (como ONA en el home). Los 'Chico' se agrupan de a 2 en una grilla entre los grandes, según el orden."
+                  style={{
+                    width: 14, height: 14, borderRadius: '50%', border: '1px solid rgba(20,20,20,0.35)',
+                    display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: 10, fontWeight: 700, color: 'rgba(20,20,20,0.5)', cursor: 'help', textTransform: 'none',
+                  }}>i</span>
+              </label>
+              <select value={featuredSize} onChange={e => setFeaturedSize(e.target.value as 'large' | 'small')} style={{ ...inputStyle, cursor: 'pointer' }}>
+                <option value="small">Chico (grilla 2x2)</option>
+                <option value="large">Grande (ancho completo)</option>
+              </select>
+            </div>
+          )}
         </div>
       </div>
 

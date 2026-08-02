@@ -1,6 +1,6 @@
 'use client';
 import { use, useEffect, useState } from 'react';
-import { getDoc, doc, getDocs, collection, query, orderBy } from 'firebase/firestore';
+import { getDoc, doc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Project, ProjectBlock } from '@/lib/types';
 import { FALLBACK_PROJECTS } from '@/lib/fallbackProjects';
@@ -68,7 +68,6 @@ function ContentBlock({ block, title }: { block: ProjectBlock; title: string }) 
 export default function ProyectoDetalle({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const [project, setProject] = useState<Project | null>(null);
-  const [nextId, setNextId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -76,23 +75,13 @@ export default function ProyectoDetalle({ params }: { params: Promise<{ id: stri
       try {
         const snap = await getDoc(doc(db, 'projects', id));
         if (snap.exists()) {
-          const data = { id: snap.id, ...snap.data() } as Project;
-          setProject(data);
-
-          const listSnap = await getDocs(query(collection(db, 'projects'), orderBy('order', 'asc')));
-          const list = listSnap.docs.map(d => ({ id: d.id, ...d.data() })) as Project[];
-          const idx = list.findIndex(p => p.id === id);
-          if (idx !== -1) setNextId(list[(idx + 1) % list.length].id);
+          setProject({ id: snap.id, ...snap.data() } as Project);
         } else {
           throw new Error('not found');
         }
       } catch {
         const fallback = FALLBACK_PROJECTS.find(p => p.id === id);
-        if (fallback) {
-          setProject(fallback);
-          const idx = FALLBACK_PROJECTS.findIndex(p => p.id === id);
-          setNextId(FALLBACK_PROJECTS[(idx + 1) % FALLBACK_PROJECTS.length].id);
-        }
+        if (fallback) setProject(fallback);
       } finally {
         setLoading(false);
       }
@@ -157,11 +146,9 @@ export default function ProyectoDetalle({ params }: { params: Promise<{ id: stri
           <ContentBlock key={block.id} block={block} title={project.title} />
         ))}
 
-        {nextId && (
-          <div style={{ textAlign: 'center', paddingTop: 40 }}>
-            <ArrowButton href={`/proyectos/${nextId}`} variant="dark" split>Ver siguiente proyecto</ArrowButton>
-          </div>
-        )}
+        <div style={{ textAlign: 'center', paddingTop: 40 }}>
+          <ArrowButton href="/proyectos" variant="dark" split>Volver a proyectos</ArrowButton>
+        </div>
       </section>
 
       <Footer minimal />

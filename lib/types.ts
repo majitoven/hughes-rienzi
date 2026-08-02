@@ -10,6 +10,7 @@ export interface Project {
   facts: ProjectFact[];
   content: ProjectBlock[];
   featured: boolean;
+  featuredSize?: 'large' | 'small';
   createdAt: any;
   updatedAt?: any;
   order?: number;
