@@ -11,9 +11,10 @@ interface Props {
   noArrow?: boolean;
   fontSize?: number;
   split?: boolean;
+  external?: boolean;
 }
 
-export default function ArrowButton({ href, onClick, children, variant = 'dark', type = 'button', noArrow = false, fontSize, split = false }: Props) {
+export default function ArrowButton({ href, onClick, children, variant = 'dark', type = 'button', noArrow = false, fontSize, split = false, external = false }: Props) {
   if (split) {
     const className = `hr-abtn hr-abtn--${variant}`;
     const content = (
@@ -24,6 +25,7 @@ export default function ArrowButton({ href, onClick, children, variant = 'dark',
         </span>
       </>
     );
+    if (href && external) return <a href={href} target="_blank" rel="noopener noreferrer" className={className}>{content}</a>;
     if (href) return <Link href={href} className={className}>{content}</Link>;
     return <button type={type} onClick={onClick} className={className}>{content}</button>;
   }

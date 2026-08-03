@@ -7,6 +7,8 @@ import { FALLBACK_BLOG } from '@/lib/fallbackBlog';
 import Image from 'next/image';
 import FadeIn from '@/components/FadeIn';
 import Footer from '@/components/Footer';
+import Skeleton from '@/components/Skeleton';
+import ArrowButton from '@/components/ArrowButton';
 
 function isVideoUrl(url: string) {
   return /\.(mp4|webm|mov)$/i.test(url);
@@ -37,8 +39,15 @@ export default function BlogPostDetalle({ params }: { params: Promise<{ id: stri
   }, [id]);
 
   if (loading) return (
-    <main style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <p style={{ fontFamily: 'var(--font)', color: 'var(--text-muted)' }}>Cargando...</p>
+    <main style={{ background: '#fff' }}>
+      <section className="hr-section" style={{ padding: '200px 79px 0', maxWidth: 1000, margin: '0 auto' }}>
+        <Skeleton height={14} width={120} style={{ marginBottom: 12 }} />
+        <Skeleton height={45} width="70%" style={{ marginBottom: 40 }} />
+        <Skeleton aspectRatio="4 / 3" borderRadius={24} style={{ marginBottom: 40 }} />
+        <Skeleton height={18} style={{ marginBottom: 8 }} />
+        <Skeleton height={18} width="90%" style={{ marginBottom: 8 }} />
+        <Skeleton height={18} width="80%" />
+      </section>
     </main>
   );
 
@@ -80,6 +89,12 @@ export default function BlogPostDetalle({ params }: { params: Promise<{ id: stri
                 }
               </div>
             ))}
+          </div>
+        )}
+
+        {post.externalUrl && (
+          <div style={{ textAlign: 'center', paddingBottom: 64 }}>
+            <ArrowButton href={post.externalUrl} variant="dark" split external>Leer nota completa</ArrowButton>
           </div>
         )}
       </section>

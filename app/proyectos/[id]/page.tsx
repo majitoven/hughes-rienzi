@@ -8,6 +8,7 @@ import Image from 'next/image';
 import FadeIn from '@/components/FadeIn';
 import ArrowButton from '@/components/ArrowButton';
 import Footer from '@/components/Footer';
+import Skeleton from '@/components/Skeleton';
 
 function isVideoUrl(url: string) {
   return /\.(mp4|webm|mov)$/i.test(url);
@@ -90,8 +91,17 @@ export default function ProyectoDetalle({ params }: { params: Promise<{ id: stri
   }, [id]);
 
   if (loading) return (
-    <main style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <p style={{ fontFamily: 'var(--font)', color: 'var(--text-muted)' }}>Cargando...</p>
+    <main style={{ background: '#fff' }}>
+      <Skeleton aspectRatio="1456 / 655" borderRadius={0} />
+      <section className="hr-section" style={{ padding: '64px 79px 0', maxWidth: 1440, margin: '0 auto' }}>
+        <Skeleton height={65} width="40%" style={{ marginBottom: 24 }} />
+        <div style={{ display: 'flex', gap: 24 }}>
+          {Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} height={28} width={120} />)}
+        </div>
+      </section>
+      <section className="hr-section" style={{ padding: '56px 79px 80px', maxWidth: 1440, margin: '0 auto' }}>
+        <Skeleton aspectRatio="1288 / 945" borderRadius={32} />
+      </section>
     </main>
   );
 
@@ -146,7 +156,10 @@ export default function ProyectoDetalle({ params }: { params: Promise<{ id: stri
           <ContentBlock key={block.id} block={block} title={project.title} />
         ))}
 
-        <div style={{ textAlign: 'center', paddingTop: 40 }}>
+        <div style={{ textAlign: 'center', paddingTop: 40, display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
+          {project.externalUrl && (
+            <ArrowButton href={project.externalUrl} variant="dark" split external>Visitar sitio web</ArrowButton>
+          )}
           <ArrowButton href="/proyectos" variant="dark" split>Volver a proyectos</ArrowButton>
         </div>
       </section>
@@ -157,7 +170,7 @@ export default function ProyectoDetalle({ params }: { params: Promise<{ id: stri
         @media (max-width: 900px) {
           .hr-section { padding-left: 20px !important; padding-right: 20px !important; }
           .hr-project-text-block, .hr-project-image-pair { grid-template-columns: 1fr !important; gap: 24px !important; }
-          .hr-project-facts { gap: 8px 24px !important; }
+          .hr-project-facts { gap: 10px 20px !important; justify-content: flex-start !important; }
         }
       `}</style>
     </main>

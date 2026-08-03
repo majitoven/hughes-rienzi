@@ -7,6 +7,7 @@ export interface Project {
   heroImage?: string;
   logoImage?: string;
   status?: string;
+  externalUrl?: string;
   facts: ProjectFact[];
   content: ProjectBlock[];
   featured: boolean;
@@ -37,6 +38,7 @@ export interface BlogPost {
   coverImage: string;
   gallery: string[];
   content: string;
+  externalUrl?: string;
   createdAt: any;
   updatedAt?: any;
   order?: number;

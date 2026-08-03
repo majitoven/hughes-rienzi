@@ -102,3 +102,14 @@ input, textarea { font-family: var(--font); }
 .hr-abtn-plain--light:hover { background: #fff; color: var(--black); }
 .hr-abtn-plain--white { color: var(--black); border: 1px solid #fff; background: #fff; }
 .hr-abtn-plain--white:hover { background: var(--black); color: #fff; }
+
+/* Skeleton loading */
+@keyframes hr-shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+.hr-skeleton {
+  background: linear-gradient(90deg, var(--gray) 25%, #ececec 37%, var(--gray) 63%);
+  background-size: 800px 100%;
+  animation: hr-shimmer 1.4s ease-in-out infinite;
+}

@@ -63,6 +63,7 @@ export default function BlogForm({ initialData, postId, onSave, saving }: Props)
   const [title, setTitle] = useState(initialData?.title ?? '');
   const [date, setDate] = useState(initialData?.date ?? '');
   const [content, setContent] = useState(initialData?.content ?? '');
+  const [externalUrl, setExternalUrl] = useState(initialData?.externalUrl ?? '');
 
   const [coverUrl, setCoverUrl] = useState(initialData?.coverImage ?? '');
   const [coverUploading, setCoverUploading] = useState(false);
@@ -122,7 +123,7 @@ export default function BlogForm({ initialData, postId, onSave, saving }: Props)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await onSave({
-      title, date, content,
+      title, date, content, externalUrl,
       coverImage: coverUrl,
       gallery,
       order: initialData?.order ?? 999,
@@ -143,6 +144,10 @@ export default function BlogForm({ initialData, postId, onSave, saving }: Props)
           <div>
             <label style={labelStyle}>Fecha</label>
             <input value={date} onChange={e => setDate(e.target.value)} style={inputStyle} placeholder="05 Mayo, 2026" />
+          </div>
+          <div>
+            <label style={labelStyle}>Link a la nota completa (opcional)</label>
+            <input value={externalUrl} onChange={e => setExternalUrl(e.target.value)} style={inputStyle} placeholder="https://..." />
           </div>
         </div>
       </div>

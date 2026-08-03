@@ -50,7 +50,7 @@ export default function Contacto() {
     <main style={{ background: '#fff' }}>
       <div className="hr-section" style={{ maxWidth: 1440, margin: '0 auto', paddingTop: 200, paddingBottom: 96, paddingLeft: 79, paddingRight: 79 }}>
         <FadeIn>
-          <h1 style={{ fontFamily: 'var(--font)', fontWeight: 500, fontSize: 65, marginBottom: 64 }}>Contactanos!</h1>
+          <h1 className="hr-contact-title" style={{ fontFamily: 'var(--font)', fontWeight: 500, fontSize: 65, marginBottom: 64 }}>Contactanos!</h1>
         </FadeIn>
 
         <div className="hr-contact-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 80 }}>
@@ -96,6 +96,8 @@ export default function Contacto() {
       {toast && <Toast message={toast.msg} ok={toast.ok} />}
       <style>{`
         @media (max-width: 900px) {
+          .hr-section { padding: 120px 20px 64px !important; }
+          .hr-contact-title { font-size: 42px !important; margin-bottom: 40px !important; }
           .hr-contact-grid { grid-template-columns: 1fr !important; gap: 48px !important; }
           .hr-contact-grid > div:last-child { align-items: flex-start !important; text-align: left !important; }
         }

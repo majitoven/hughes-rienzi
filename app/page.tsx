@@ -9,6 +9,7 @@ import Link from 'next/link';
 import FadeIn from '@/components/FadeIn';
 import ArrowButton from '@/components/ArrowButton';
 import Footer from '@/components/Footer';
+import Skeleton from '@/components/Skeleton';
 
 const FALLBACK_FEATURED = FALLBACK_PROJECTS;
 
@@ -97,7 +98,7 @@ function groupFeatured(projects: Project[]): FeaturedSegment[] {
 }
 
 export default function Home() {
-  const [featured, setFeatured] = useState(FALLBACK_FEATURED);
+  const [featured, setFeatured] = useState<Project[] | null>(null);
 
   useEffect(() => {
     const fetchFeatured = async () => {
@@ -107,15 +108,18 @@ export default function Home() {
           const data = snap.docs.map(d => ({ id: d.id, ...d.data() })) as Project[];
           data.sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
           setFeatured(data);
+        } else {
+          setFeatured(FALLBACK_FEATURED);
         }
       } catch {
-        // keep fallback
+        setFeatured(FALLBACK_FEATURED);
       }
     };
     fetchFeatured();
   }, []);
 
-  const featuredSegments = groupFeatured(featured);
+  const loading = featured === null;
+  const featuredSegments = loading ? [] : groupFeatured(featured);
 
   return (
     <main style={{ background: '#fff' }}>
@@ -158,7 +162,15 @@ export default function Home() {
           </h2>
         </FadeIn>
 
-        {featuredSegments.map((segment, i) => (
+        {loading ? (
+          <>
+            <Skeleton aspectRatio="1379 / 784" borderRadius={33} style={{ marginBottom: 24 }} />
+            <div className="hr-featured-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, marginBottom: 40 }}>
+              <Skeleton aspectRatio="677 / 381" borderRadius={25} />
+              <Skeleton aspectRatio="677 / 381" borderRadius={25} />
+            </div>
+          </>
+        ) : featuredSegments.map((segment, i) => (
           segment.type === 'large' ? (
             <FeaturedLargeCard key={segment.project.id} project={segment.project} />
           ) : (

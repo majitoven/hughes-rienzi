@@ -8,6 +8,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import FadeIn from '@/components/FadeIn';
 import Footer from '@/components/Footer';
+import Skeleton from '@/components/Skeleton';
 
 function GrayArrow() {
   return (
@@ -18,21 +19,21 @@ function GrayArrow() {
 }
 
 export default function Blog() {
-  const [posts, setPosts] = useState<BlogPost[]>(FALLBACK_BLOG);
+  const [posts, setPosts] = useState<BlogPost[] | null>(null);
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
         const snap = await getDocs(query(collection(db, 'blogPosts'), orderBy('order', 'asc')));
-        if (!snap.empty) {
-          setPosts(snap.docs.map(d => ({ id: d.id, ...d.data() })) as BlogPost[]);
-        }
+        setPosts(snap.empty ? FALLBACK_BLOG : snap.docs.map(d => ({ id: d.id, ...d.data() })) as BlogPost[]);
       } catch {
-        // keep fallback
+        setPosts(FALLBACK_BLOG);
       }
     };
     fetchPosts();
   }, []);
+
+  const loading = posts === null;
 
   return (
     <main style={{ background: '#fff' }}>
@@ -49,7 +50,13 @@ export default function Blog() {
         </div>
 
         <div className="hr-charlas-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '40px 32px' }}>
-          {posts.map(p => (
+          {loading && Array.from({ length: 3 }).map((_, i) => (
+            <div key={i}>
+              <Skeleton aspectRatio="405.54 / 297.42" borderRadius={16} style={{ marginBottom: 16 }} />
+              <Skeleton height={24} width="60%" />
+            </div>
+          ))}
+          {!loading && posts.map(p => (
             <FadeIn key={p.id}>
               <Link href={`/blog/${p.id}`} style={{ display: 'block' }}>
                 <div style={{ position: 'relative', width: '100%', aspectRatio: '405.54 / 297.42', borderRadius: 16, overflow: 'hidden', marginBottom: 16 }}>

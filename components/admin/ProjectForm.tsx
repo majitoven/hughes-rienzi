@@ -76,6 +76,7 @@ export default function ProjectForm({ initialData, projectId, onSave, saving }: 
   const [subtitle, setSubtitle] = useState(initialData?.subtitle ?? '');
   const [location, setLocation] = useState(initialData?.location ?? '');
   const [status, setStatus] = useState(initialData?.status ?? '');
+  const [externalUrl, setExternalUrl] = useState(initialData?.externalUrl ?? '');
   const [featured, setFeatured] = useState(initialData?.featured ?? false);
   const [featuredSize, setFeaturedSize] = useState<'large' | 'small'>(initialData?.featuredSize ?? 'small');
 
@@ -212,7 +213,7 @@ export default function ProjectForm({ initialData, projectId, onSave, saving }: 
     const cleanBlocks = blocks.filter(b => b.type === 'text' ? (b.headline?.trim() || b.body?.trim()) : (b.images?.length ?? 0) > 0);
 
     await onSave({
-      title, subtitle, location, status, featured,
+      title, subtitle, location, status, externalUrl, featured,
       ...(featured ? { featuredSize } : {}),
       coverImage: coverUrl,
       heroImage: heroUrl,
@@ -251,6 +252,10 @@ export default function ProjectForm({ initialData, projectId, onSave, saving }: 
               <option value="Construcción">Construcción</option>
               <option value="Estrenar">Estrenar</option>
             </select>
+          </div>
+          <div>
+            <label style={labelStyle}>Link al sitio web del proyecto (opcional)</label>
+            <input value={externalUrl} onChange={e => setExternalUrl(e.target.value)} style={inputStyle} placeholder="https://..." />
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, paddingTop: 28 }}>
             <input type="checkbox" id="featured" checked={featured} onChange={e => setFeatured(e.target.checked)}
@@ -335,8 +340,11 @@ export default function ProjectForm({ initialData, projectId, onSave, saving }: 
       {/* Logo image */}
       <div style={sectionStyle}>
         <SectionTitle>Logo del proyecto (blanco)</SectionTitle>
-        <p style={{ ...f, fontSize: 12, color: 'rgba(20,20,20,0.4)', marginBottom: 16 }}>
-          Isotipo en blanco sobre transparente. Se superpone sobre las fotos en Home, el listado de Proyectos y el hero de la ficha del proyecto. Si no se sube, se muestra el título como texto.
+        <p style={{ ...f, fontSize: 12, color: 'rgba(20,20,20,0.4)', marginBottom: 8 }}>
+          Isotipo en blanco sobre transparente (PNG). Se superpone sobre las fotos en Home, el listado de Proyectos y el hero de la ficha del proyecto. Si no se sube, se muestra el título como texto.
+        </p>
+        <p style={{ ...f, fontSize: 12, color: 'rgba(20,20,20,0.4)', marginBottom: 16, background: '#fafafa', border: '1px solid #eee', borderRadius: 6, padding: '8px 12px' }}>
+          💡 Para que todos los logos se vean del mismo tamaño relativo entre sí: recortá la imagen bien ajustada al isotipo (sin márgenes vacíos alrededor). En el sitio, todos se muestran a la misma <strong style={{ fontWeight: 600 }}>altura</strong>, así que el ancho se ajusta según la proporción real del logo — si el archivo tiene espacio vacío de más, se va a ver más chico que el resto.
         </p>
         {logoUrl && (
           <div style={{ marginBottom: 16, borderRadius: 8, overflow: 'hidden', height: 120, background: '#181717', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
