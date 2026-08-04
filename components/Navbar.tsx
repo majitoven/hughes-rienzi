@@ -50,7 +50,7 @@ export default function Navbar() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 40 }}>
           <div className="hr-nav-links" style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
             {links.map(l => (
-              <Link key={l.href} href={l.href} style={{
+              <Link key={l.href} href={l.href} className="hr-nav-link" style={{
                 fontFamily: 'var(--font)', fontSize: 14, fontWeight: 400,
                 color: textColor, opacity: pathname === l.href ? 0.6 : 0.95,
               }}>{l.label}</Link>
@@ -58,7 +58,7 @@ export default function Navbar() {
           </div>
 
           <span className="hr-nav-cta">
-            <ArrowButton href="/contacto" variant={dark ? 'dark' : 'light'} split>Contacto</ArrowButton>
+            <ArrowButton href="/contacto" variant={dark ? 'dark' : 'white'} split compact>Contacto</ArrowButton>
           </span>
 
           <button onClick={() => setMenuOpen(!menuOpen)}
@@ -89,6 +89,11 @@ export default function Navbar() {
       </div>
 
       <style>{`
+        .hr-nav-link { transition: text-shadow 0.25s ease, opacity 0.25s ease; }
+        .hr-nav-link:hover {
+          text-shadow: -0.4px 0 currentColor, 0.4px 0 currentColor, 0 -0.4px currentColor, 0 0.4px currentColor;
+          opacity: 1 !important;
+        }
         @media (max-width: 900px) {
           .hr-nav { padding: 12px 20px !important; }
           .hr-nav-links { display: none !important; }

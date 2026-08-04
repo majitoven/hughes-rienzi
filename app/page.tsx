@@ -130,7 +130,7 @@ export default function Home() {
         <div style={{ position: 'relative', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 24px' }}>
           <FadeIn>
             <h1 className="hr-hero-title" style={{ fontFamily: 'var(--font)', fontWeight: 600, fontSize: 70, lineHeight: '64px', color: '#fff', textAlign: 'center', maxWidth: 900 }}>
-              Imaginando nuevas formas de vivir.
+              Imaginando nuevas<br />formas de vivir.
             </h1>
           </FadeIn>
         </div>

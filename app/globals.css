@@ -85,6 +85,9 @@ input, textarea { font-family: var(--font); }
 .hr-abtn--white:hover .hr-abtn-circle { background: #fff; }
 .hr-abtn--white:hover .hr-abtn-circle img { filter: none; }
 
+.hr-abtn--compact { padding: 3px 3px 3px 18px; gap: 8px; }
+.hr-abtn--compact .hr-abtn-circle { width: 28px; height: 28px; }
+
 /* ArrowButton — plain (bordered, non-split) variant */
 .hr-abtn-plain {
   display: inline-flex; align-items: center; gap: 12px;

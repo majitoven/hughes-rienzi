@@ -12,16 +12,17 @@ interface Props {
   fontSize?: number;
   split?: boolean;
   external?: boolean;
+  compact?: boolean;
 }
 
-export default function ArrowButton({ href, onClick, children, variant = 'dark', type = 'button', noArrow = false, fontSize, split = false, external = false }: Props) {
+export default function ArrowButton({ href, onClick, children, variant = 'dark', type = 'button', noArrow = false, fontSize, split = false, external = false, compact = false }: Props) {
   if (split) {
-    const className = `hr-abtn hr-abtn--${variant}`;
+    const className = `hr-abtn hr-abtn--${variant}${compact ? ' hr-abtn--compact' : ''}`;
     const content = (
       <>
-        <span className="hr-abtn-label" style={{ fontSize: fontSize ?? 14 }}>{children}</span>
+        <span className="hr-abtn-label" style={{ fontSize: fontSize ?? (compact ? 13 : 14) }}>{children}</span>
         <span className="hr-abtn-circle">
-          <Image src="/images/home/arrowblack.png" alt="" width={12} height={12} />
+          <Image src="/images/home/arrowblack.png" alt="" width={compact ? 10 : 12} height={compact ? 10 : 12} />
         </span>
       </>
     );
