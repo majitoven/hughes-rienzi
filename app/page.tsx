@@ -156,7 +156,7 @@ export default function Home() {
 
       {/* Proyectos Destacados */}
       <section className="hr-section" style={{ padding: '0 33px 120px', maxWidth: 1440, margin: '0 auto' }}>
-        <div style={{ maxWidth: 1364, margin: '0 auto', borderTop: '1px solid rgba(20,20,20,0.15)', marginBottom: 64 }} />
+        <div style={{ maxWidth: 1364, margin: '0 auto', borderTop: '1px solid rgba(20,20,20,0.9)', marginBottom: 64 }} />
         <FadeIn>
           <h2 className="hr-featured-title" style={{ fontFamily: 'var(--font)', fontWeight: 500, fontSize: 50, lineHeight: '54px', textAlign: 'center', marginBottom: 48 }}>
             PROYECTOS DESTACADOS
@@ -199,9 +199,9 @@ export default function Home() {
         <div className="hr-stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 20 }}>
           {STATS.map(s => (
             <FadeIn key={s.label}>
-              <div className="hr-stat-card" style={{ background: '#F5F5F5', borderRadius: 20, padding: '32px 24px', textAlign: 'left', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: 340 }}>
-                <p style={{ fontFamily: 'var(--font)', fontWeight: 400, fontSize: 18, lineHeight: '24px', color: 'var(--black)' }}>{s.label}</p>
-                <p style={{ fontFamily: 'var(--font)', fontWeight: 500, fontSize: 40 }}>{s.value}</p>
+              <div className="hr-stat-card" style={{ background: '#F5F5F5', borderRadius: 20, padding: '32px 24px', textAlign: 'left', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', height: 340 }}>
+                <p style={{ fontFamily: 'var(--font)', fontWeight: 400, fontSize: 18, lineHeight: '24px', color: 'var(--black)', marginBottom: 20 }}>{s.label}</p>
+                <p style={{ fontFamily: 'var(--font)', fontWeight: 500, fontSize: 68 }}>{s.value}</p>
               </div>
             </FadeIn>
           ))}

@@ -72,7 +72,7 @@ export default function Blog() {
         </div>
       </section>
 
-      <Footer />
+      <Footer minimal />
 
       <style>{`
         @media (max-width: 900px) {

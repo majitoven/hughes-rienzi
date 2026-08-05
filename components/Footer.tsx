@@ -30,7 +30,7 @@ export default function Footer({ minimal = false }: { minimal?: boolean }) {
     <footer style={{ background: '#fff', color: 'var(--black)' }}>
       {!minimal && (
         <div style={{ maxWidth: 1300, margin: '0 auto', padding: '80px 64px 0', textAlign: 'center' }} className="hr-proyectos-section">
-          <div style={{ maxWidth: 1364, margin: '0 auto', borderTop: '1px solid rgba(20,20,20,0.15)', marginBottom: 64 }} />
+          <div style={{ maxWidth: 1364, margin: '0 auto', borderTop: '1px solid rgba(20,20,20,1)', marginBottom: 64 }} />
           <Image src="/images/home/nuestrosproyectos.png" alt="Nuestros Proyectos" width={2000} height={351}
             style={{ width: '100%', height: 'auto' }} />
         </div>
@@ -40,7 +40,7 @@ export default function Footer({ minimal = false }: { minimal?: boolean }) {
         background: '#fff', color: 'var(--black)',
         padding: '64px 64px 32px',
       }}>
-        <div style={{ maxWidth: 1300, margin: '0 auto', paddingTop: 48, borderTop: '1px solid rgba(20,20,20,0.12)' }}>
+        <div style={{ maxWidth: 1300, margin: '0 auto', paddingTop: 48, borderTop: '1px solid rgba(20,20,20,1)' }}>
 
           {/* Row 1: GHR logo <-> Comercializa en exclusividad */}
           <div className="footer-top-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 24, marginBottom: 32 }}>
