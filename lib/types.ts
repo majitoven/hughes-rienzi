@@ -25,10 +25,13 @@ export interface ProjectFact {
 
 export interface ProjectBlock {
   id: string;
-  type: 'text' | 'images';
+  type: 'text' | 'images' | 'phrase' | 'amenities' | 'gallery';
   headline?: string;
+  subtitle?: string;
   body?: string;
   images?: string[];
+  amenities?: string[];
+  amenitiesColumns?: 1 | 2;
 }
 
 export interface BlogPost {

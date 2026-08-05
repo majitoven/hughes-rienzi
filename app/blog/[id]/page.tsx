@@ -43,7 +43,7 @@ export default function BlogPostDetalle({ params }: { params: Promise<{ id: stri
       <section className="hr-section" style={{ padding: '200px 79px 0', maxWidth: 1000, margin: '0 auto' }}>
         <Skeleton height={14} width={120} style={{ marginBottom: 12 }} />
         <Skeleton height={45} width="70%" style={{ marginBottom: 40 }} />
-        <Skeleton aspectRatio="4 / 3" borderRadius={24} style={{ marginBottom: 40 }} />
+        <Skeleton aspectRatio="4 / 3"  style={{ marginBottom: 40 }} />
         <Skeleton height={18} style={{ marginBottom: 8 }} />
         <Skeleton height={18} width="90%" style={{ marginBottom: 8 }} />
         <Skeleton height={18} width="80%" />
@@ -67,7 +67,7 @@ export default function BlogPostDetalle({ params }: { params: Promise<{ id: stri
 
         {post.coverImage && (
           <FadeIn>
-            <div style={{ position: 'relative', width: '100%', aspectRatio: '4 / 3', borderRadius: 24, overflow: 'hidden', marginBottom: 40 }}>
+            <div style={{ position: 'relative', width: '100%', aspectRatio: '4 / 3', overflow: 'hidden', marginBottom: 40 }}>
               <Image src={post.coverImage} alt={post.title} fill style={{ objectFit: 'cover' }} />
             </div>
           </FadeIn>
@@ -82,7 +82,7 @@ export default function BlogPostDetalle({ params }: { params: Promise<{ id: stri
         {post.gallery.filter(url => url !== post.coverImage).length > 0 && (
           <div className="hr-blog-gallery" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 64 }}>
             {post.gallery.filter(url => url !== post.coverImage).map((url, i) => (
-              <div key={i} style={{ position: 'relative', width: '100%', aspectRatio: '4 / 3', borderRadius: 16, overflow: 'hidden' }}>
+              <div key={i} style={{ position: 'relative', width: '100%', aspectRatio: '4 / 3',  overflow: 'hidden' }}>
                 {isVideoUrl(url)
                   ? <video src={url} controls style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   : <Image src={url} alt="" fill style={{ objectFit: 'cover' }} />

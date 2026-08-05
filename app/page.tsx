@@ -14,9 +14,10 @@ import Skeleton from '@/components/Skeleton';
 const FALLBACK_FEATURED = FALLBACK_PROJECTS;
 
 const STATS = [
-  { value: '20+', label: 'Años de trayectoria' },
-  { value: '22+', label: 'Proyectos desarrollados' },
-  { value: '456+', label: 'Unidades entregadas' },
+  { value: '20+', label: 'Años de trayectoria.' },
+  { value: '22+', label: 'Proyectos desarrollados.' },
+  { value: '456+', label: 'Unidades Entregadas.' },
+  { value: '00+', label: 'M2 Construidos' },
 ];
 
 function FeaturedLargeCard({ project }: { project: Project }) {
@@ -36,9 +37,9 @@ function FeaturedLargeCard({ project }: { project: Project }) {
           )}
         </div>
         {project.location && (
-          <div style={{ position: 'absolute', top: 32, right: 32, display: 'flex', alignItems: 'center', gap: 6, background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(6px)', color: '#fff', borderRadius: 999, padding: '8px 16px', fontFamily: 'var(--font)', fontSize: 13 }}>
+          <div style={{ position: 'absolute', top: 32, right: 32, display: 'flex', alignItems: 'center', gap: 6, background: 'transparent', color: '#fff', borderRadius: 999, padding: '8px 16px', fontFamily: 'var(--font)', fontSize: 13 }}>
             <span style={{ width: 12, height: 15, position: 'relative', flexShrink: 0 }}>
-              <Image src="/images/proyectos/pin.png" alt="" fill sizes="12px" style={{ objectFit: 'contain', filter: 'invert(1)' }} />
+              <Image src="/images/proyectos/pinwhite.png" alt="" fill sizes="12px" style={{ objectFit: 'contain' }} />
             </span>
             {project.location}
           </div>
@@ -65,9 +66,9 @@ function FeaturedSmallCard({ project }: { project: Project }) {
           )}
         </div>
         {project.location && (
-          <div style={{ position: 'absolute', top: 20, right: 20, display: 'flex', alignItems: 'center', gap: 5, background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(6px)', color: '#fff', borderRadius: 999, padding: '6px 14px', fontFamily: 'var(--font)', fontSize: 12 }}>
+          <div style={{ position: 'absolute', top: 20, right: 20, display: 'flex', alignItems: 'center', gap: 5, background: 'transparent', color: '#fff', borderRadius: 999, padding: '6px 14px', fontFamily: 'var(--font)', fontSize: 12 }}>
             <span style={{ width: 10, height: 13, position: 'relative', flexShrink: 0 }}>
-              <Image src="/images/proyectos/pin.png" alt="" fill sizes="10px" style={{ objectFit: 'contain', filter: 'invert(1)' }} />
+              <Image src="/images/proyectos/pinwhite.png" alt="" fill sizes="10px" style={{ objectFit: 'contain' }} />
             </span>
             {project.location}
           </div>
@@ -142,7 +143,7 @@ export default function Home() {
         <div className="hr-intro-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 820px) 1fr', gap: 40, alignItems: 'center' }}>
           <FadeIn direction="right">
             <h2 className="hr-intro-title" style={{ fontFamily: 'var(--font)', fontWeight: 500, fontSize: 50, lineHeight: '57px', marginBottom: 24 }}>
-              Desarrollamos proyectos<br />que combinan arquitectura<br />ubicación y calidad de vida.
+             DESARROLLAMOS PROYECTOS<br />QUE COMBINAN ARQUITECTURA<br />UBICACIÓN Y CALIDAD DE VIDA.
             </h2>
             <p style={{ fontFamily: 'var(--font)', fontWeight: 400, fontSize: 24, lineHeight: '28px', color: 'var(--text-muted)', marginBottom: 56 }}>
               Más de 20 años desarrollando proyectos que <br />interpretan nuevas formas de vivir y generan valor <br />en ubicaciones estratégicas.
@@ -158,7 +159,7 @@ export default function Home() {
         <div style={{ maxWidth: 1364, margin: '0 auto', borderTop: '1px solid rgba(20,20,20,0.15)', marginBottom: 64 }} />
         <FadeIn>
           <h2 className="hr-featured-title" style={{ fontFamily: 'var(--font)', fontWeight: 500, fontSize: 50, lineHeight: '54px', textAlign: 'center', marginBottom: 48 }}>
-            Proyectos Destacados
+            PROYECTOS DESTACADOS
           </h2>
         </FadeIn>
 
@@ -185,38 +186,22 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Trayectoria banner */}
-      <section className="hr-lake-banner" style={{ position: 'relative', width: '100%', aspectRatio: '1440 / 598' }}>
-        <Image src="/images/home/lake-banner.png" alt="Grupo Hughes & Rienzi" fill sizes="100vw" style={{ objectFit: 'cover' }} />
-        <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.35)' }} />
-        <div style={{ position: 'relative', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '48px 24px' }}>
-          <FadeIn>
-            <h2 className="hr-banner-title" style={{ fontFamily: 'var(--font)', fontWeight: 500, fontSize: 65, lineHeight: '67px', color: '#fff', maxWidth: 900, marginBottom: 32 }}>
-              Más de 20 años creando proyectos para vivir mejor.
-            </h2>
-            <p style={{ fontFamily: 'var(--font)', fontWeight: 300, fontSize: 16, color: 'rgba(255,255,255,0.85)' }}>
-              Una trayectoria construida en diseño, calidad y visión de futuro.
-            </p>
-          </FadeIn>
-        </div>
-      </section>
-
       {/* Stats */}
       <section className="hr-section" style={{ padding: '120px 64px', maxWidth: 1300, margin: '0 auto', textAlign: 'center' }}>
         <FadeIn>
-          <h2 className="hr-stats-title" style={{ fontFamily: 'var(--font)', fontWeight: 500, fontSize: 60, lineHeight: '60px', maxWidth: 900, margin: '0 auto 20px' }}>
-            Una forma de desarrollar donde el diseño, la calidad y el detalle marcan la diferencia.
+          <h2 className="hr-stats-title" style={{ fontFamily: 'var(--font)', fontWeight: 500, fontSize: 50, lineHeight: '54px', maxWidth: 900, margin: '0 auto 20px' }}>
+            MÁS DE 20 AÑOS CREANDO PROYECTOS PARA VIVIR MEJOR
           </h2>
-          <p style={{ fontFamily: 'var(--font)', fontWeight: 400, fontSize: 24, lineHeight: '28px', color: 'var(--text-muted)', maxWidth: 640, margin: '0 auto 56px' }}>
-            Más de 20 años creando proyectos con identidad propia, aportando valor al entorno y generando nuevas oportunidades para vivir e invertir.
+          <p style={{ fontFamily: 'var(--font)', fontWeight: 400, fontSize: 18, lineHeight: '24px', color: 'var(--black)', maxWidth: 500, margin: '0 auto 56px' }}>
+            Una forma de desarrollar donde el diseño, la calidad y el detalle marcan la diferencia.
           </p>
         </FadeIn>
-        <div className="hr-stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+        <div className="hr-stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 20 }}>
           {STATS.map(s => (
             <FadeIn key={s.label}>
-              <div style={{ background: 'var(--gray)', borderRadius: 20, padding: '40px 24px' }}>
-                <p style={{ fontFamily: 'var(--font)', fontWeight: 500, fontSize: 40, marginBottom: 8 }}>{s.value}</p>
-                <p style={{ fontFamily: 'var(--font)', fontWeight: 300, fontSize: 14, color: 'var(--text-muted)' }}>{s.label}</p>
+              <div className="hr-stat-card" style={{ background: '#F5F5F5', borderRadius: 20, padding: '32px 24px', textAlign: 'left', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: 340 }}>
+                <p style={{ fontFamily: 'var(--font)', fontWeight: 400, fontSize: 18, lineHeight: '24px', color: 'var(--black)' }}>{s.label}</p>
+                <p style={{ fontFamily: 'var(--font)', fontWeight: 500, fontSize: 40 }}>{s.value}</p>
               </div>
             </FadeIn>
           ))}
@@ -228,7 +213,7 @@ export default function Home() {
         <div className="hr-alliance-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 80, alignItems: 'center' }}>
           <FadeIn direction="right">
             <h2 className="hr-alliance-title" style={{ fontFamily: 'var(--font)', fontWeight: 500, fontSize: 65, lineHeight: '65px', marginBottom: 24 }}>Nuevas oportunidades</h2>
-            <p style={{ fontFamily: 'var(--font)', fontWeight: 400, fontSize: 24, lineHeight: '28px', color: 'var(--text-muted)', marginBottom: 32 }}>
+            <p style={{ fontFamily: 'var(--font)', fontWeight: 400, fontSize: 24, lineHeight: '28px', color: 'var(--black)', marginBottom: 32 }}>
               Una alianza con beneficios exclusivos y condiciones preferenciales para proyectos seleccionados.
             </p>
             <ArrowButton href="/proyectos" variant="dark" split>Conocer Proyectos</ArrowButton>
@@ -252,10 +237,11 @@ export default function Home() {
           .hr-alliance-grid, .hr-intro-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
           .hr-intro-spacer { display: none !important; }
           .hr-intro-title { font-size: 30px !important; line-height: 36px !important; }
-          .hr-featured-title, .hr-banner-title, .hr-stats-title, .hr-alliance-title { font-size: 32px !important; line-height: 38px !important; }
-          .hr-featured-grid, .hr-stats-grid { grid-template-columns: 1fr !important; }
+          .hr-featured-title, .hr-stats-title, .hr-alliance-title { font-size: 32px !important; line-height: 38px !important; }
+          .hr-featured-grid { grid-template-columns: 1fr !important; }
+          .hr-stats-grid { grid-template-columns: 1fr 1fr !important; }
+          .hr-stat-card { height: 220px !important; }
           .hr-main-card-footer { bottom: 24px !important; right: 24px !important; }
-          .hr-lake-banner { aspect-ratio: auto !important; min-height: 420px !important; }
         }
       `}</style>
     </main>

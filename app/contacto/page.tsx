@@ -38,11 +38,11 @@ export default function Contacto() {
   };
 
   const label: React.CSSProperties = {
-    fontFamily: 'var(--font)', fontSize: 15, color: 'var(--text-muted)', marginBottom: 12,
+    fontFamily: 'var(--font)', fontSize: 15, color: 'var(--black)', marginBottom: 12,
   };
   const inp: React.CSSProperties = {
     width: '100%', background: 'transparent', border: 'none',
-    borderBottom: '1px solid rgba(20,20,20,0.2)', paddingBottom: 12,
+    borderBottom: '1px solid var(--black)', paddingBottom: 12,
     fontFamily: 'var(--font)', fontSize: 16, color: 'var(--black)', outline: 'none',
   };
 
@@ -77,19 +77,6 @@ export default function Contacto() {
               </div>
             </form>
           </FadeIn>
-
-          <FadeIn direction="left" delay={0.1}>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', textAlign: 'right', gap: 24, height: '100%', justifyContent: 'center' }}>
-              <p style={{ fontFamily: 'var(--font)', fontSize: 17, color: 'var(--black)' }}>info@hr.com.uy</p>
-              <div>
-                <p style={{ fontFamily: 'var(--font)', fontSize: 17, color: 'var(--black)' }}>+598 2601 7836</p>
-                <p style={{ fontFamily: 'var(--font)', fontSize: 17, color: 'var(--black)' }}>+598 099 919 535</p>
-              </div>
-              <p style={{ fontFamily: 'var(--font)', fontSize: 17, color: 'var(--black)', lineHeight: '24px' }}>
-                Carlos F. Saez 6422, Oficina 101,<br />Montevideo, Uruguay
-              </p>
-            </div>
-          </FadeIn>
         </div>
       </div>
 
@@ -99,7 +86,6 @@ export default function Contacto() {
           .hr-section { padding: 120px 20px 64px !important; }
           .hr-contact-title { font-size: 42px !important; margin-bottom: 40px !important; }
           .hr-contact-grid { grid-template-columns: 1fr !important; gap: 48px !important; }
-          .hr-contact-grid > div:last-child { align-items: flex-start !important; text-align: left !important; }
         }
       `}</style>
       <Footer minimal />

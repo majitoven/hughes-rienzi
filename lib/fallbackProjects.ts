@@ -15,13 +15,13 @@ export const FALLBACK_PROJECTS: Project[] = [
     heroImage: '/images/proyectos/hero.png',
     logoImage: '/images/proyectos/ona-logo.png',
     status: 'Construcción',
+    externalUrl: 'https://hr.com.uy',
     facts: [
       { id: '1', label: 'Ubicación', value: 'Lago La Caleta' },
       { id: '2', label: 'Estado', value: 'En construcción' },
       { id: '3', label: 'Año', value: '2026' },
-      { id: '4', label: 'Cantidad de unidades', value: 'A confirmar' },
-      { id: '5', label: 'Tipología', value: '1 a 4 dormitorios' },
-      { id: '6', label: 'Terreno', value: '10.200 m²' },
+      { id: '4', label: 'Terreno', value: '10.200 m²' },
+      { id: '5', label: 'Unidades', value: 'A confirmar' },
     ],
     content: [
       { id: '1', type: 'images', images: ['/images/proyectos/ona-laguna-02.png'] },
@@ -32,12 +32,17 @@ export const FALLBACK_PROJECTS: Project[] = [
       },
       { id: '3', type: 'images', images: ['/images/proyectos/ona-pil-01.png', '/images/proyectos/ona-interior-bosque.png'] },
       {
-        id: '4', type: 'text',
+        id: '4', type: 'phrase',
         headline: 'Vista al lago. Vista al bosque. Vista a la vida que estás buscando.',
-        body: 'Ya no se trata de vegetación cautivante, sino de una naturaleza que se extiende, se enmarca, te guía y te invita a permanecer. Canteros envolventes, árboles de gran porte, mobiliario urbano integrado y una piscina junto al lago componen una escena serena y vibrante a la vez.\n\nUn parque vivo. Un nuevo lenguaje para vincular paisaje y ciudad desde el suelo hacia el cielo.',
       },
-      { id: '5', type: 'images', images: ['/images/proyectos/ona-int-laguna.png'] },
-      { id: '6', type: 'images', images: ['/images/proyectos/ona-ame-01.png', '/images/proyectos/ona-pil-exterior.png'] },
+      {
+        id: '5', type: 'amenities', amenitiesColumns: 2,
+        amenities: [
+          'Playa y muelle sobre el lago', 'Plaza para niños', 'Piscina abierta con solárium', 'Piscina cerrada',
+          'Gimnasio', 'Cowork', 'Barbacoa con parrillero', 'Clubhouse gourmet c/sala de pool',
+        ],
+      },
+      { id: '6', type: 'gallery', images: ['/images/proyectos/ona-int-laguna.png', '/images/proyectos/ona-ame-01.png', '/images/proyectos/ona-pil-exterior.png'] },
     ],
     featured: true,
     featuredSize: 'large',

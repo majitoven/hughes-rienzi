@@ -35,16 +35,17 @@ export default function Navbar() {
       <nav className="hr-nav" style={{
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50,
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        padding: '8px 48px',
+        padding: '6px 48px',
         background: dark ? '#fff' : (scrolled ? 'rgba(20,20,20,0.92)' : 'transparent'),
-        borderBottom: dark ? '1px solid rgba(20,20,20,0.1)' : 'none',
         backdropFilter: !dark && scrolled ? 'blur(12px)' : 'none',
         transition: 'background 0.4s',
       }}>
+        {dark && <div className="hr-nav-divider" style={{ position: 'absolute', bottom: 0, left: 48, right: 48, height: 1, background: 'var(--black)' }} />}
         <Link href="/" style={{ display: 'flex' }}>
           <Image
             src={dark ? '/images/home/Logo_GRUPO_BLANCOseccionitau.png' : '/images/home/logoheader.png'}
-            alt="Grupo Hughes & Rienzi" width={135} height={137} className="hr-nav-logo" priority />
+            alt="Grupo Hughes & Rienzi" width={135} height={137} className="hr-nav-logo"
+            style={{ width: 'auto', height: 78 }} priority />
         </Link>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 40 }}>
@@ -100,6 +101,7 @@ export default function Navbar() {
           .hr-nav-cta { display: none !important; }
           .hr-hamburger { display: flex !important; }
           .hr-nav-logo { width: 64px !important; height: auto !important; }
+          .hr-nav-divider { left: 20px !important; right: 20px !important; }
         }
       `}</style>
     </>

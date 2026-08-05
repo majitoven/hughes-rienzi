@@ -15,10 +15,19 @@ const TEMPLATE_FACTS: ProjectFact[] = [
   { id: '1', label: 'Ubicación', value: '' },
   { id: '2', label: 'Estado', value: '' },
   { id: '3', label: 'Año', value: '' },
-  { id: '4', label: 'Cantidad de unidades', value: '' },
-  { id: '5', label: 'Tipología', value: '' },
-  { id: '6', label: 'Terreno', value: '' },
+  { id: '4', label: 'Terreno', value: '' },
+  { id: '5', label: 'Unidades', value: '' },
 ];
+
+const MAX_GALLERY_IMAGES = 8;
+
+const BLOCK_LABELS: Record<ProjectBlock['type'], string> = {
+  text: 'Texto',
+  images: 'Imágenes',
+  phrase: 'Frase',
+  amenities: 'Amenities',
+  gallery: 'Galería final',
+};
 
 const f: React.CSSProperties = { fontFamily: 'var(--font)' };
 
@@ -165,15 +174,25 @@ export default function ProjectForm({ initialData, projectId, onSave, saving }: 
 
   const addTextBlock = () => setBlocks(b => [...b, { id: nextId(), type: 'text', headline: '', body: '' }]);
   const addImagesBlock = () => setBlocks(b => [...b, { id: nextId(), type: 'images', images: [] }]);
+  const addPhraseBlock = () => setBlocks(b => [...b, { id: nextId(), type: 'phrase', headline: '' }]);
+  const addAmenitiesBlock = () => setBlocks(b => [...b, { id: nextId(), type: 'amenities', amenities: [''], amenitiesColumns: 2 }]);
+  const addGalleryBlock = () => setBlocks(b => [...b, { id: nextId(), type: 'gallery', images: [] }]);
   const removeBlock = (i: number) => setBlocks(b => b.filter((_, idx) => idx !== i));
   const updateBlock = (i: number, patch: Partial<ProjectBlock>) =>
     setBlocks(b => b.map((x, idx) => idx === i ? { ...x, ...patch } : x));
+
+  const addAmenityItem = (i: number) => updateBlock(i, { amenities: [...(blocks[i].amenities ?? []), ''] });
+  const removeAmenityItem = (i: number, itemIdx: number) =>
+    updateBlock(i, { amenities: (blocks[i].amenities ?? []).filter((_, j) => j !== itemIdx) });
+  const updateAmenityItem = (i: number, itemIdx: number, val: string) =>
+    updateBlock(i, { amenities: (blocks[i].amenities ?? []).map((x, j) => j === itemIdx ? val : x) });
 
   const handleBlockImageUpload = async (i: number, files: FileList) => {
     setFileError('');
     const block = blocks[i];
     const existing = block.images ?? [];
-    const room = Math.max(0, 2 - existing.length);
+    const max = block.type === 'gallery' ? MAX_GALLERY_IMAGES : 2;
+    const room = Math.max(0, max - existing.length);
     const fileArray = Array.from(files).slice(0, room);
     for (const file of fileArray) {
       const err = validateFile(file);
@@ -210,7 +229,14 @@ export default function ProjectForm({ initialData, projectId, onSave, saving }: 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const cleanFacts = facts.filter(fct => fct.label.trim() && fct.value.trim());
-    const cleanBlocks = blocks.filter(b => b.type === 'text' ? (b.headline?.trim() || b.body?.trim()) : (b.images?.length ?? 0) > 0);
+    const cleanBlocks = blocks
+      .map(b => b.type === 'amenities' ? { ...b, amenities: (b.amenities ?? []).filter(a => a.trim()) } : b)
+      .filter(b => {
+        if (b.type === 'text') return !!(b.headline?.trim() || b.body?.trim());
+        if (b.type === 'phrase') return !!b.headline?.trim();
+        if (b.type === 'amenities') return (b.amenities?.length ?? 0) > 0;
+        return (b.images?.length ?? 0) > 0;
+      });
 
     await onSave({
       title, subtitle, location, status, externalUrl, featured,
@@ -427,7 +453,7 @@ export default function ProjectForm({ initialData, projectId, onSave, saving }: 
       <div style={sectionStyle}>
         <SectionTitle>Contenido de la página</SectionTitle>
         <p style={{ ...f, fontSize: 12, color: 'rgba(20,20,20,0.4)', marginBottom: 8 }}>
-          Armá la página en el orden que quieras: bloques de texto (título + párrafos) y bloques de imágenes (1 = foto completa, 2 = lado a lado). Acepta imágenes y videos (.mp4, .mov).
+          Armá la página en el orden que quieras: texto (título + párrafos), imágenes (1 = foto completa, 2 = lado a lado), frase corta (con botón al sitio web), amenities (lista en 1 o 2 columnas) y galería final (foto grande + miniaturas seleccionables). Acepta imágenes y videos (.mp4, .mov).
         </p>
         <p style={{ ...f, fontSize: 11, color: 'rgba(20,20,20,0.3)', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 6 }}>
           <span style={{ fontSize: 14 }}>⠿</span> Arrastrá los bloques para cambiar el orden
@@ -445,13 +471,13 @@ export default function ProjectForm({ initialData, projectId, onSave, saving }: 
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   <span style={{ color: 'rgba(20,20,20,0.2)', fontSize: 16, userSelect: 'none' }}>⠿</span>
                   <span style={{ ...f, fontSize: 11, fontWeight: 500, color: 'rgba(20,20,20,0.45)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                    {block.type === 'text' ? 'Texto' : 'Imágenes'}
+                    {BLOCK_LABELS[block.type]}
                   </span>
                 </div>
                 <button type="button" onClick={() => removeBlock(i)} style={{ background: 'none', border: 'none', color: '#ccc', cursor: 'pointer', fontSize: 15 }}>✕</button>
               </div>
 
-              {block.type === 'text' ? (
+              {block.type === 'text' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                   <input
                     placeholder="Título (ej. El arte de vivir en armonía con la naturaleza.)"
@@ -467,16 +493,76 @@ export default function ProjectForm({ initialData, projectId, onSave, saving }: 
                     style={{ ...inputStyle, resize: 'vertical', fontSize: 13, lineHeight: '20px' }}
                   />
                 </div>
-              ) : (
+              )}
+
+              {block.type === 'phrase' && (
                 <div>
+                  <input
+                    placeholder="Frase corta (ej. Vista al lago. Vista al bosque. Vista a la vida que estás buscando.)"
+                    value={block.headline ?? ''}
+                    onChange={e => updateBlock(i, { headline: e.target.value })}
+                    style={{ ...inputStyle, fontWeight: 500 }}
+                  />
+                  <p style={{ ...f, fontSize: 11, color: 'rgba(20,20,20,0.3)', marginTop: 8 }}>
+                    Sin párrafo debajo. Si el proyecto tiene &quot;Link al sitio web&quot;, el botón &quot;Ir al sitio web&quot; aparece al lado de esta frase.
+                  </p>
+                </div>
+              )}
+
+              {block.type === 'amenities' && (
+                <div>
+                  <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+                    {([1, 2] as const).map(cols => (
+                      <button key={cols} type="button" onClick={() => updateBlock(i, { amenitiesColumns: cols })} style={{
+                        ...f, fontSize: 12, fontWeight: 400, padding: '6px 16px', borderRadius: 999, cursor: 'pointer',
+                        background: (block.amenitiesColumns ?? 2) === cols ? 'var(--black)' : 'transparent',
+                        color: (block.amenitiesColumns ?? 2) === cols ? '#fff' : 'rgba(20,20,20,0.5)',
+                        border: `1px solid ${(block.amenitiesColumns ?? 2) === cols ? 'var(--black)' : '#ddd'}`,
+                      }}>{cols} columna{cols > 1 ? 's' : ''}</button>
+                    ))}
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {(block.amenities ?? []).map((item, itemIdx) => (
+                      <div key={itemIdx} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                        <input
+                          placeholder="Ej. Piscina abierta con solárium"
+                          value={item}
+                          onChange={e => updateAmenityItem(i, itemIdx, e.target.value)}
+                          style={{ ...inputStyle, flex: 1 }}
+                        />
+                        <button type="button" onClick={() => removeAmenityItem(i, itemIdx)} style={{ background: 'none', border: 'none', color: '#ccc', cursor: 'pointer', fontSize: 15, flexShrink: 0 }}>✕</button>
+                      </div>
+                    ))}
+                  </div>
+                  <button type="button" onClick={() => addAmenityItem(i)} style={{
+                    marginTop: 10, background: 'none', border: '1px dashed #ddd', borderRadius: 8, padding: '8px 16px',
+                    ...f, fontSize: 12, color: 'rgba(20,20,20,0.45)', cursor: 'pointer', width: '100%',
+                  }}>+ Agregar amenity</button>
+                </div>
+              )}
+
+              {(block.type === 'images' || block.type === 'gallery') && (
+                <div>
+                  {block.type === 'gallery' && (
+                    <p style={{ ...f, fontSize: 11, color: 'rgba(20,20,20,0.3)', marginBottom: 10 }}>
+                      La primera imagen es la foto grande; el resto son las miniaturas seleccionables.
+                    </p>
+                  )}
                   {(block.images?.length ?? 0) > 0 && (
-                    <div style={{ display: 'grid', gridTemplateColumns: `repeat(${block.images!.length}, 1fr)`, gap: 10, marginBottom: 10 }}>
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: `repeat(${Math.min(block.images!.length, block.type === 'gallery' ? 4 : 2)}, 1fr)`,
+                      gap: 10, marginBottom: 10,
+                    }}>
                       {block.images!.map((url, imgIdx) => (
                         <div key={imgIdx} style={{ position: 'relative', borderRadius: 8, overflow: 'hidden', aspectRatio: '4/3', background: '#f0f0f0' }}>
                           {isVideoUrl(url)
                             ? <video src={url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} muted />
                             : <img src={url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                           }
+                          {block.type === 'gallery' && imgIdx === 0 && (
+                            <span style={{ position: 'absolute', top: 4, left: 4, background: 'rgba(0,0,0,0.6)', color: '#fff', borderRadius: 6, padding: '2px 8px', fontSize: 10, fontFamily: 'var(--font)' }}>Grande</span>
+                          )}
                           <button type="button" onClick={() => removeBlockImage(i, imgIdx)} style={{
                             position: 'absolute', top: 4, right: 4, background: 'rgba(0,0,0,0.6)', border: 'none',
                             color: '#fff', borderRadius: 6, padding: '2px 8px', cursor: 'pointer', fontSize: 12,
@@ -485,7 +571,7 @@ export default function ProjectForm({ initialData, projectId, onSave, saving }: 
                       ))}
                     </div>
                   )}
-                  {(block.images?.length ?? 0) < 2 && (
+                  {(block.images?.length ?? 0) < (block.type === 'gallery' ? MAX_GALLERY_IMAGES : 2) && (
                     <input type="file" accept="image/*,video/*" multiple
                       onChange={e => { if (e.target.files?.length) handleBlockImageUpload(i, e.target.files); }}
                       style={{ ...inputStyle, padding: '8px 14px', cursor: 'pointer', fontSize: 12 }} />
@@ -501,15 +587,27 @@ export default function ProjectForm({ initialData, projectId, onSave, saving }: 
 
         {fileError && <p style={{ ...f, fontSize: 12, color: '#C8102E', marginTop: 12, background: '#fff0f0', padding: '8px 12px', borderRadius: 6 }}>⚠ {fileError}</p>}
 
-        <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
+        <div style={{ display: 'flex', gap: 8, marginTop: 16, flexWrap: 'wrap' }}>
           <button type="button" onClick={addTextBlock} style={{
-            flex: 1, background: 'none', border: '1px dashed #ddd', borderRadius: 8, padding: '10px 20px',
+            flex: '1 1 30%', background: 'none', border: '1px dashed #ddd', borderRadius: 8, padding: '10px 20px',
             ...f, fontSize: 13, color: 'rgba(20,20,20,0.45)', cursor: 'pointer',
           }}>+ Agregar texto</button>
           <button type="button" onClick={addImagesBlock} style={{
-            flex: 1, background: 'none', border: '1px dashed #ddd', borderRadius: 8, padding: '10px 20px',
+            flex: '1 1 30%', background: 'none', border: '1px dashed #ddd', borderRadius: 8, padding: '10px 20px',
             ...f, fontSize: 13, color: 'rgba(20,20,20,0.45)', cursor: 'pointer',
           }}>+ Agregar imágenes</button>
+          <button type="button" onClick={addPhraseBlock} style={{
+            flex: '1 1 30%', background: 'none', border: '1px dashed #ddd', borderRadius: 8, padding: '10px 20px',
+            ...f, fontSize: 13, color: 'rgba(20,20,20,0.45)', cursor: 'pointer',
+          }}>+ Agregar frase</button>
+          <button type="button" onClick={addAmenitiesBlock} style={{
+            flex: '1 1 30%', background: 'none', border: '1px dashed #ddd', borderRadius: 8, padding: '10px 20px',
+            ...f, fontSize: 13, color: 'rgba(20,20,20,0.45)', cursor: 'pointer',
+          }}>+ Agregar amenities</button>
+          <button type="button" onClick={addGalleryBlock} style={{
+            flex: '1 1 30%', background: 'none', border: '1px dashed #ddd', borderRadius: 8, padding: '10px 20px',
+            ...f, fontSize: 13, color: 'rgba(20,20,20,0.45)', cursor: 'pointer',
+          }}>+ Agregar galería final</button>
         </div>
       </div>
 
