@@ -33,6 +33,7 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 !.env.example
+!.env
 
 # firebase admin service account credentials — never commit
 scripts/serviceAccount.json
