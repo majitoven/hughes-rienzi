@@ -9,9 +9,10 @@ const SOCIALS = [
 
 function MiniArrow() {
   return (
-    <span style={{ width: 18, height: 18, borderRadius: '50%', border: '1px solid rgba(20,20,20,0.4)',
-      display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-      <Image src="/images/home/arrowblack.png" alt="" width={7} height={7} />
+    <span className="hr-footer-social-arrow" style={{ width: 18, height: 18, borderRadius: '50%', border: '1px solid rgba(20,20,20,0.4)',
+      display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+      transition: 'transform 0.3s ease, background 0.3s ease, border-color 0.3s ease' }}>
+      <Image src="/images/home/arrowblack.png" alt="" width={7} height={7} className="hr-footer-social-arrow-img" style={{ transition: 'filter 0.3s ease' }} />
     </span>
   );
 }
@@ -45,7 +46,7 @@ export default function Footer({ minimal = false }: { minimal?: boolean }) {
           {/* Row 1: GHR logo <-> Comercializa en exclusividad */}
           <div className="footer-top-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 24, marginBottom: 32 }}>
             <Image src="/images/home/GHRlogo.svg" alt="GHR" width={170} height={73} style={{ objectFit: 'contain' }} />
-            <div className="footer-comercializa" style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+            <div className="footer-comercializa" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8 }}>
               <p style={{ fontFamily: 'var(--font)', fontWeight: 500, fontSize: 13, letterSpacing: '0.04em', color: 'var(--black)', whiteSpace: 'nowrap' }}>
                 Comercializa en exclusividad:
               </p>
@@ -89,7 +90,7 @@ export default function Footer({ minimal = false }: { minimal?: boolean }) {
 
             <div className="footer-socials" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8 }}>
               {SOCIALS.map(s => (
-                <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer"
+                <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" className="hr-footer-social"
                   style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontFamily: 'var(--font)', fontSize: 14, color: 'var(--black)' }}>
                   {s.label} <MiniArrow />
                 </a>
@@ -106,6 +107,9 @@ export default function Footer({ minimal = false }: { minimal?: boolean }) {
       </div>
 
       <style>{`
+        .hr-footer-social:hover { opacity: 0.6; }
+        .hr-footer-social:hover .hr-footer-social-arrow { transform: scale(1.15) rotate(45deg); background: var(--black); border-color: var(--black); }
+        .hr-footer-social:hover .hr-footer-social-arrow-img { filter: invert(1); }
         @media (max-width: 768px) {
           .hr-proyectos-section { padding: 48px 20px 0 !important; }
           .footer-inner { padding: 48px 20px 24px !important; }

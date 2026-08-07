@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Project } from '@/lib/types';
@@ -20,10 +20,43 @@ const STATS = [
   { value: '00+', label: 'M2 Construidos' },
 ];
 
+function CountUp({ value, style }: { value: string; style?: React.CSSProperties }) {
+  const match = value.match(/^(\d+)(.*)$/);
+  const target = match ? parseInt(match[1], 10) : 0;
+  const digits = match ? match[1].length : 0;
+  const suffix = match ? match[2] : value;
+  const [display, setDisplay] = useState(0);
+  const ref = useRef<HTMLParagraphElement>(null);
+  const started = useRef(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || !match) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !started.current) {
+        started.current = true;
+        const duration = 1200;
+        const start = performance.now();
+        const tick = (now: number) => {
+          const progress = Math.min((now - start) / duration, 1);
+          setDisplay(Math.round(progress * target));
+          if (progress < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+        observer.disconnect();
+      }
+    }, { threshold: 0.4 });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [target, match]);
+
+  return <p ref={ref} style={style}>{match ? `${String(display).padStart(digits, '0')}${suffix}` : suffix}</p>;
+}
+
 function FeaturedLargeCard({ project }: { project: Project }) {
   return (
     <FadeIn>
-      <Link href={`/proyectos/${project.id}`} style={{ display: 'block', position: 'relative', width: '100%', aspectRatio: '1379 / 784', borderRadius: 33, overflow: 'hidden', marginBottom: 24 }}>
+      <Link href={`/proyectos/${project.id}`} className="hr-featured-card" style={{ display: 'block', position: 'relative', width: '100%', aspectRatio: '1379 / 784', borderRadius: 33, overflow: 'hidden', marginBottom: 24 }}>
         <Image src={project.coverImage} alt={project.title} fill sizes="(max-width: 900px) 100vw, 1374px" style={{ objectFit: 'cover' }} />
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.35) 100%)' }} />
         <div style={{ position: 'absolute', top: 32, left: 32, display: 'flex', alignItems: 'center', gap: 12, color: '#fff' }}>
@@ -44,7 +77,7 @@ function FeaturedLargeCard({ project }: { project: Project }) {
             {project.location}
           </div>
         )}
-        <div className="hr-main-card-footer" style={{ position: 'absolute', bottom: 32, right: 32 }}>
+        <div className="hr-main-card-footer hr-card-cta" style={{ position: 'absolute', bottom: 32, right: 32, transition: 'transform 0.3s ease' }}>
           <span style={{ pointerEvents: 'none' }}><ArrowButton variant="white" split>Ver Proyecto</ArrowButton></span>
         </div>
       </Link>
@@ -55,7 +88,7 @@ function FeaturedLargeCard({ project }: { project: Project }) {
 function FeaturedSmallCard({ project }: { project: Project }) {
   return (
     <FadeIn>
-      <Link href={`/proyectos/${project.id}`} style={{ display: 'block', position: 'relative', width: '100%', aspectRatio: '677.0864868164062 / 380.8612365722656', borderRadius: 25, overflow: 'hidden' }}>
+      <Link href={`/proyectos/${project.id}`} className="hr-featured-card" style={{ display: 'block', position: 'relative', width: '100%', aspectRatio: '677.0864868164062 / 380.8612365722656', borderRadius: 25, overflow: 'hidden' }}>
         <Image src={project.coverImage} alt={project.title} fill sizes="(max-width: 900px) 100vw, 50vw" style={{ objectFit: 'cover' }} />
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.4) 100%)' }} />
         <div style={{ position: 'absolute', top: 20, left: 20, color: '#fff' }}>
@@ -73,9 +106,9 @@ function FeaturedSmallCard({ project }: { project: Project }) {
             {project.location}
           </div>
         )}
-        <p style={{ position: 'absolute', bottom: 20, left: 20, color: '#fff', fontFamily: 'var(--font)', fontWeight: 500, fontSize: 16 }}>
-          {project.title} {project.subtitle}
-        </p>
+        <span className="hr-card-arrow" style={{ position: 'absolute', bottom: 20, right: 20, width: 36, height: 36, transition: 'transform 0.3s ease' }}>
+          <Image src="/images/home/arrowwhiterounded.png" alt="" fill style={{ objectFit: 'contain' }} />
+        </span>
       </Link>
     </FadeIn>
   );
@@ -135,11 +168,11 @@ export default function Home() {
             </h1>
           </FadeIn>
         </div>
-        <div style={{ position: 'absolute', bottom: 32, left: '50%', transform: 'translateX(-50%)', width: 40, height: 40, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.6)', color: '#fff', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>↓</div>
+        <div className="hr-scroll-indicator" onClick={() => document.getElementById('hr-intro')?.scrollIntoView({ behavior: 'smooth' })} style={{ position: 'absolute', bottom: 32, left: '50%', transform: 'translateX(-50%)', width: 40, height: 40, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.6)', color: '#fff', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'transform 0.3s ease, background 0.3s ease' }}>↓</div>
       </section>
 
       {/* Intro */}
-      <section className="hr-section" style={{ padding: '120px 64px', maxWidth: 1300, margin: '0 auto' }}>
+      <section id="hr-intro" className="hr-section" style={{ padding: '120px 64px', maxWidth: 1300, margin: '0 auto' }}>
         <div className="hr-intro-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 820px) 1fr', gap: 40, alignItems: 'center' }}>
           <FadeIn direction="right">
             <h2 className="hr-intro-title" style={{ fontFamily: 'var(--font)', fontWeight: 500, fontSize: 50, lineHeight: '57px', marginBottom: 24 }}>
@@ -187,7 +220,7 @@ export default function Home() {
       </section>
 
       {/* Stats */}
-      <section className="hr-section" style={{ padding: '120px 64px', maxWidth: 1300, margin: '0 auto', textAlign: 'center' }}>
+      <section className="hr-section" style={{ padding: '60px 64px 120px 64px', maxWidth: 1300, margin: '0 auto', textAlign: 'center' }}>
         <FadeIn>
           <h2 className="hr-stats-title" style={{ fontFamily: 'var(--font)', fontWeight: 500, fontSize: 50, lineHeight: '54px', maxWidth: 900, margin: '0 auto 20px' }}>
             MÁS DE 20 AÑOS CREANDO PROYECTOS PARA VIVIR MEJOR
@@ -201,7 +234,7 @@ export default function Home() {
             <FadeIn key={s.label}>
               <div className="hr-stat-card" style={{ background: '#F5F5F5', borderRadius: 20, padding: '32px 24px', textAlign: 'left', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', height: 340 }}>
                 <p style={{ fontFamily: 'var(--font)', fontWeight: 400, fontSize: 18, lineHeight: '24px', color: 'var(--black)', marginBottom: 20 }}>{s.label}</p>
-                <p style={{ fontFamily: 'var(--font)', fontWeight: 500, fontSize: 68 }}>{s.value}</p>
+                <CountUp value={s.value} style={{ fontFamily: 'var(--font)', fontWeight: 500, fontSize: 68 }} />
               </div>
             </FadeIn>
           ))}
@@ -209,7 +242,7 @@ export default function Home() {
       </section>
 
       {/* Alianza Itaú */}
-      <section className="hr-section hr-alliance" style={{ padding: '120px 64px', maxWidth: 1300, margin: '0 auto' }}>
+      <section className="hr-section hr-alliance" style={{ padding: '60px 64px 120px 64px', maxWidth: 1300, margin: '0 auto' }}>
         <div className="hr-alliance-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 80, alignItems: 'center' }}>
           <FadeIn direction="right">
             <h2 className="hr-alliance-title" style={{ fontFamily: 'var(--font)', fontWeight: 500, fontSize: 65, lineHeight: '65px', marginBottom: 24 }}>Nuevas oportunidades</h2>
@@ -231,6 +264,8 @@ export default function Home() {
       <Footer />
 
       <style>{`
+        .hr-scroll-indicator:hover { transform: translateX(-50%) scale(1.15); background: rgba(255,255,255,0.15); }
+        .hr-featured-card:hover .hr-card-cta, .hr-featured-card:hover .hr-card-arrow { transform: scale(1.1); }
         @media (max-width: 900px) {
           .hr-hero-title { font-size: 38px !important; line-height: 44px !important; }
           .hr-section { padding: 64px 20px !important; }

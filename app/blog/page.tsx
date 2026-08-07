@@ -12,7 +12,7 @@ import Skeleton from '@/components/Skeleton';
 
 function GrayArrow() {
   return (
-    <span style={{ width: 11, height: 11, flexShrink: 0, display: 'inline-block', position: 'relative' }}>
+    <span className="hr-blog-arrow" style={{ width: 11, height: 11, flexShrink: 0, display: 'inline-block', position: 'relative', transition: 'transform 0.3s ease' }}>
       <Image src="/images/home/arrowblack.png" alt="" fill style={{ objectFit: 'contain' }} />
     </span>
   );
@@ -53,9 +53,12 @@ export default function Blog() {
           ))}
           {!loading && posts.map(p => (
             <FadeIn key={p.id}>
-              <Link href={`/blog/${p.id}`} style={{ display: 'block' }}>
+              <Link href={`/blog/${p.id}`} className="hr-blog-card" style={{ display: 'block' }}>
                 <div style={{ position: 'relative', width: '100%', aspectRatio: '405.54 / 297.42', overflow: 'hidden', marginBottom: 16 }}>
-                  <Image src={p.coverImage} alt={p.title} fill style={{ objectFit: 'cover' }} />
+                  <div style={{ position: 'absolute', inset: 0, transition: 'transform 0.4s ease' }} className="hr-blog-card-image">
+                    <Image src={p.coverImage} alt={p.title} fill style={{ objectFit: 'cover' }} />
+                  </div>
+                  <div className="hr-blog-card-overlay" style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.25)', opacity: 0, transition: 'opacity 0.4s ease' }} />
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginBottom: 4 }}>
            
@@ -75,6 +78,9 @@ export default function Blog() {
       <Footer minimal />
 
       <style>{`
+        .hr-blog-card:hover .hr-blog-card-image { transform: scale(1.04); }
+        .hr-blog-card:hover .hr-blog-card-overlay { opacity: 1 !important; }
+        .hr-blog-card:hover .hr-blog-arrow { transform: translateX(3px); }
         @media (max-width: 900px) {
           .hr-section { padding: 120px 20px 64px !important; }
           .hr-charlas-grid { grid-template-columns: 1fr 1fr !important; gap: 24px !important; }

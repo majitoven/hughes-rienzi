@@ -24,12 +24,6 @@ function Media({ src, alt }: { src: string; alt: string }) {
 function GalleryBlock({ images, title }: { images: string[]; title: string }) {
   const [active, setActive] = useState(0);
 
-  useEffect(() => {
-    if (images.length < 2) return;
-    const timer = setInterval(() => setActive(a => (a + 1) % images.length), 2000);
-    return () => clearInterval(timer);
-  }, [images.length]);
-
   if (images.length === 0) return null;
   const go = (dir: 1 | -1) => setActive(a => (a + dir + images.length) % images.length);
   const thumbCount = Math.min(3, images.length - 1);
@@ -48,6 +42,7 @@ function GalleryBlock({ images, title }: { images: string[]; title: string }) {
     type="button"
     aria-label="Foto anterior"
     onClick={() => go(-1)}
+    className="hr-gallery-arrow"
     style={{
       position: 'absolute',
       left: 12,
@@ -62,6 +57,7 @@ function GalleryBlock({ images, title }: { images: string[]; title: string }) {
       alignItems: 'center',
       justifyContent: 'center',
       cursor: 'pointer',
+      transition: 'background 0.25s ease, transform 0.25s ease',
     }}
   >
     <span
@@ -83,6 +79,7 @@ function GalleryBlock({ images, title }: { images: string[]; title: string }) {
     type="button"
     aria-label="Foto siguiente"
     onClick={() => go(1)}
+    className="hr-gallery-arrow"
     style={{
       position: 'absolute',
       right: 12,
@@ -97,6 +94,7 @@ function GalleryBlock({ images, title }: { images: string[]; title: string }) {
       alignItems: 'center',
       justifyContent: 'center',
       cursor: 'pointer',
+      transition: 'background 0.25s ease, transform 0.25s ease',
     }}
   >
     <span
@@ -119,11 +117,13 @@ function GalleryBlock({ images, title }: { images: string[]; title: string }) {
         {thumbIndexes.length > 0 && (
           <div className="hr-gallery-thumbs" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
             {thumbIndexes.map(idx => (
-              <button key={idx} type="button" onClick={() => setActive(idx)} style={{
+              <button key={idx} type="button" onClick={() => setActive(idx)} className="hr-gallery-thumb" style={{
                 position: 'relative', width: '100%', aspectRatio: '4 / 3', overflow: 'hidden',
                 border: 'none', padding: 0, cursor: 'pointer', background: 'none',
               }}>
-                <Media src={images[idx]} alt={title} />
+                <div style={{ position: 'absolute', inset: 0, transition: 'transform 0.3s ease' }}>
+                  <Media src={images[idx]} alt={title} />
+                </div>
               </button>
             ))}
           </div>
@@ -138,12 +138,19 @@ function ContentBlock({ block, title, externalUrl }: { block: ProjectBlock; titl
     return (
       <FadeIn>
         <div className="hr-project-text-block" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 80, padding: '56px 0' }}>
-          <p style={{ fontFamily: 'var(--font)', fontWeight: 500, fontSize: 45, lineHeight: '47px', color: 'var(--black)' }}>
-            {block.headline}
-          </p>
+          <div>
+            <p style={{ fontFamily: 'var(--font)', fontWeight: 500, fontSize: 45, lineHeight: '47px', color: 'var(--black)' }}>
+              {block.headline}
+            </p>
+            {block.subtitle && (
+              <p style={{ fontFamily: 'var(--font)', fontWeight: 400, fontSize: 18, lineHeight: '24px', color: 'var(--black)', marginTop: 20 }}>
+                {block.subtitle}
+              </p>
+            )}
+          </div>
           <div>
             {(block.body ?? '').split('\n\n').map((para, i) => (
-              <p key={i} style={{ fontFamily: 'var(--font)', fontWeight: 300, fontSize: 20, lineHeight: '28px', color: 'var(--black)', marginBottom: 16 }}>
+              <p key={i} style={{ fontFamily: 'var(--font)', fontWeight: 300, fontSize: 21, lineHeight: '28px', color: 'var(--black)', marginBottom: 16 }}>
                 {para}
               </p>
             ))}
@@ -275,7 +282,11 @@ export default function ProyectoDetalle({ params }: { params: Promise<{ id: stri
     <main style={{ background: '#fff' }}>
       {/* Hero */}
       <section style={{ position: 'relative', width: '100%', aspectRatio: '1456 / 655' }}>
-        <Image src={project.heroImage || project.coverImage} alt={project.title} fill priority style={{ objectFit: 'cover' }} />
+        {isVideoUrl(project.heroImage || project.coverImage) ? (
+          <video src={project.heroImage || project.coverImage} autoPlay muted loop playsInline style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+        ) : (
+          <Image src={project.heroImage || project.coverImage} alt={project.title} fill priority style={{ objectFit: 'cover' }} />
+        )}
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.05) 40%, rgba(0,0,0,0.35) 100%)' }} />
         <div style={{ position: 'relative', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#fff', textAlign: 'center' }}>
           <FadeIn>
@@ -336,6 +347,8 @@ export default function ProyectoDetalle({ params }: { params: Promise<{ id: stri
       <style>{`
         .hr-gallery-fade { animation: hr-gallery-fadein 1.2s ease; }
         @keyframes hr-gallery-fadein { from { opacity: 0; } to { opacity: 1; } }
+        .hr-gallery-arrow:hover { background: rgba(255,255,255,0.6); transform: translateY(-50%) scale(1.15); }
+        .hr-gallery-thumb:hover > div { transform: scale(1.06); }
         @media (max-width: 900px) {
           .hr-section { padding-left: 20px !important; padding-right: 20px !important; }
           .hr-project-text-block, .hr-project-image-pair { grid-template-columns: 1fr !important; gap: 24px !important; }

@@ -25,19 +25,19 @@ export default function Nosotros() {
             <h2 className="hr-nosotros-title" style={{ fontFamily: "var(--font)", fontWeight: 500, fontSize: 43, lineHeight: "50px", marginBottom: 24 }}>
               En Grupo Hughes &amp; Rienzi trabajamos hace más de 20 años en proyectos inmobiliarios.
             </h2>
-            <p style={{ fontFamily: "var(--font)", fontWeight: 400, fontSize: 24, lineHeight: "30px", color: "var(--black)" }}>
+            <p style={{ fontFamily: "var(--font)", fontWeight: 400, fontSize: 20, lineHeight: "26px", color: "var(--black)" }}>
               Adelantándonos a las tendencias del mercado. La visión de nuestros fundadores abrió los horizontes en la zona de Carrasco Este, siendo{" "}
               <strong style={{ color: "var(--black)", fontWeight: 600 }}>Grupo Hughes &amp; Rienzi pionero en los desarrollos de la zona.</strong>
             </p>
           </FadeIn>
           <FadeIn direction="left" delay={0.1} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-            <p style={{ fontFamily: "var(--font)", fontWeight: 400, fontSize: 22, lineHeight: "28px", color: "var(--black)" }}>
+            <p style={{ fontFamily: "var(--font)", fontWeight: 400, fontSize: 18, lineHeight: "24px", color: "var(--black)" }}>
               A través de nuestros emprendimientos fuimos re-imaginando e interpretando las nuevas formas de vivir con el confort de lo tradicional, adaptado a las necesidades de la vida contemporánea.
             </p>
-            <p style={{ fontFamily: "var(--font)", fontWeight: 400, fontSize: 22, lineHeight: "28px", color: "var(--black)" }}>
+            <p style={{ fontFamily: "var(--font)", fontWeight: 400, fontSize: 18, lineHeight: "24px", color: "var(--black)" }}>
               En nuestra génesis se fusiona la arquitectura con el asesoramiento integral en inversiones inmobiliarias. Dos visiones complementarias del desarrollo en real estate; por un lado, la creación y el proyecto arquitectónico, y por otro, los aspectos comerciales y financieros de los emprendimientos.
             </p>
-            <p style={{ fontFamily: "var(--font)", fontWeight: 400, fontSize: 22, lineHeight: "28px", color: "var(--black)" }}>
+            <p style={{ fontFamily: "var(--font)", fontWeight: 400, fontSize: 18, lineHeight: "24px", color: "var(--black)" }}>
               En base a una visión única y un profundo conocimiento de las preferencias y valores de nuestros clientes, construimos no sólo posibilidades de inversión, construimos nuevas oportunidades.
             </p>
           </FadeIn>
@@ -49,7 +49,7 @@ export default function Nosotros() {
             <div style={{ position: "relative", width: "100%", aspectRatio: "585 / 414", borderRadius: 57, overflow: "hidden" }}>
               <Image src="/images/nosotros/equipo.jpg" alt="Equipo Grupo Hughes & Rienzi" fill style={{ objectFit: "cover" }} />
             </div>
-            <p style={{ fontFamily: "var(--font)", fontWeight: 400, fontSize: 28, lineHeight: "36px", color: "var(--black)" }}>
+            <p style={{ fontFamily: "var(--font)", fontWeight: 400, fontSize: 22, lineHeight: "30px", color: "var(--black)" }}>
               &ldquo;En <strong style={{ fontWeight: 600 }}>Grupo Hughes &amp; Rienzi </strong> entendemos la arquitectura como una respuesta a las nuevas formas de habitar. Por eso, buscamos superarnos en cada proyecto, integrando diseño, entorno y calidad de vida, y creando experiencias que estén a la altura de la confianza que nuestros clientes depositan en nosotros.&rdquo;
             </p>
           </div>

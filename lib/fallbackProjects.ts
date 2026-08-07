@@ -28,7 +28,8 @@ export const FALLBACK_PROJECTS: Project[] = [
       {
         id: '2', type: 'text',
         headline: 'El arte de vivir en armonía con la naturaleza.',
-        body: 'Diseñamos un proyecto respetuoso del entorno y fuimos más allá: el paisaje se convierte en el hilo que lo conecta todo.\n\nONA es un desarrollo en el que arquitectura y naturaleza conviven a través de un diseño paisajístico pensado como experiencia. Sus cuatro bloques están armónicamente dispuestos sobre un parque de más de 10.000 m2, donde los recorridos peatonales, las especies nativas y las texturas del suelo crean una geografía común entre el lago, el bosque y la arquitectura.',
+        subtitle: 'Diseñamos un proyecto respetuoso del entorno y fuimos más allá: el paisaje se convierte en el hilo que lo conecta todo.',
+        body: 'ONA es un desarrollo en el que arquitectura y naturaleza conviven a través de un diseño paisajístico pensado como experiencia. Sus cuatro bloques están armónicamente dispuestos sobre un parque de más de 10.000 m2, donde los recorridos peatonales, las especies nativas y las texturas del suelo crean una geografía común entre el lago, el bosque y la arquitectura.\n\nYa no se trata de vegetación cautivante, sino de una naturaleza que se extiende, se enmarca, te guía y te invita a permanecer. Canteros envolventes, árboles de gran porte, mobiliario urbano integrado y una piscina junto al lago componen una escena serena y vibrante a la vez.',
       },
       { id: '3', type: 'images', images: ['/images/proyectos/ona-pil-01.png', '/images/proyectos/ona-interior-bosque.png'] },
       {

@@ -41,7 +41,7 @@ export default function Proyectos() {
 
         <div className="hr-proyectos-tabs" style={{ display: 'flex', gap: 28, marginBottom: 48 }}>
           {TABS.map(tab => (
-            <button key={tab} onClick={() => setActiveTab(tab)} style={{
+            <button key={tab} onClick={() => setActiveTab(tab)} className="hr-tab" style={{
               fontFamily: 'var(--font)', fontWeight: 500, fontSize: 16, lineHeight: '22px',
               padding: 0, background: 'none', border: 'none', cursor: 'pointer',
               color: activeTab === tab ? 'var(--black)' : '#5E5E5E',
@@ -59,10 +59,13 @@ export default function Proyectos() {
           ))}
           {visible.map(p => (
             <FadeIn key={p.id}>
-              <Link href={`/proyectos/${p.id}`} style={{ display: 'block' }}>
+              <Link href={`/proyectos/${p.id}`} className="hr-proyecto-card" style={{ display: 'block' }}>
                 <div style={{ position: 'relative', width: '100%', aspectRatio: '622 / 456', overflow: 'hidden', marginBottom: 20 }}>
-                  <Image src={p.coverImage} alt={p.title} fill style={{ objectFit: 'cover' }} />
-                  <span style={{ position: 'absolute', top: 16, right: 16, width: 40, height: 40 }}>
+                  <div className="hr-proyecto-card-image" style={{ position: 'absolute', inset: 0, transition: 'transform 0.4s ease' }}>
+                    <Image src={p.coverImage} alt={p.title} fill style={{ objectFit: 'cover' }} />
+                  </div>
+                  <div className="hr-proyecto-card-overlay" style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.25)', opacity: 0, transition: 'opacity 0.4s ease' }} />
+                  <span className="hr-proyecto-card-arrow" style={{ position: 'absolute', top: 16, right: 16, width: 40, height: 40, transition: 'transform 0.3s ease' }}>
                     <Image src="/images/home/arrowwhiterounded.png" alt="" fill style={{ objectFit: 'contain' }} />
                   </span>
                 </div>
@@ -75,7 +78,7 @@ export default function Proyectos() {
                       <span style={{ width: 10, height: 13, position: 'relative', flexShrink: 0 }}>
                         <Image src="/images/proyectos/pingray.png" alt="" fill style={{ objectFit: 'contain' }} />
                       </span>
-                      <p className="hr-proyecto-card-location" style={{ color: '#5E5E5E', fontWeight: 400, fontSize: 18, fontFamily: 'var(--font)' }}>
+                      <p className="hr-proyecto-card-location" style={{ color: '#5E5E5E', fontWeight: 400, fontSize: 16, fontFamily: 'var(--font)' }}>
                         {p.location}
                       </p>
                     </span>
@@ -88,6 +91,10 @@ export default function Proyectos() {
       </section>
 
       <style>{`
+        .hr-tab:hover { color: var(--black) !important; }
+        .hr-proyecto-card:hover .hr-proyecto-card-image { transform: scale(1.04); }
+        .hr-proyecto-card:hover .hr-proyecto-card-overlay { opacity: 1 !important; }
+        .hr-proyecto-card:hover .hr-proyecto-card-arrow { transform: scale(1.12); }
         @media (max-width: 900px) {
           .hr-section { padding: 100px 20px 64px !important; }
           .hr-proyectos-grid { grid-template-columns: 1fr !important; gap: 32px !important; }

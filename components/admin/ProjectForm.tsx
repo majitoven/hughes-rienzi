@@ -342,15 +342,18 @@ export default function ProjectForm({ initialData, projectId, onSave, saving }: 
       <div style={sectionStyle}>
         <SectionTitle>Imagen de hero (ficha del proyecto)</SectionTitle>
         <p style={{ ...f, fontSize: 12, color: 'rgba(20,20,20,0.4)', marginBottom: 16 }}>
-          Foto grande de fondo en la parte superior de la página del proyecto. Si no se sube, se usa la imagen de portada.
+          Foto o video grande de fondo en la parte superior de la página del proyecto. Si no se sube, se usa la imagen de portada.
         </p>
         {heroUrl && (
           <div style={{ marginBottom: 16, borderRadius: 8, overflow: 'hidden', height: 160, background: '#f0f0f0' }}>
-            <img src={heroUrl} alt="Hero" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            {isVideoUrl(heroUrl)
+              ? <video src={heroUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} muted />
+              : <img src={heroUrl} alt="Hero" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            }
           </div>
         )}
-        <label style={labelStyle}>Subir imagen</label>
-        <input type="file" accept="image/*"
+        <label style={labelStyle}>Subir imagen o video</label>
+        <input type="file" accept="image/*,video/*"
           onChange={e => { const file = e.target.files?.[0]; if (file) handleHeroUpload(file); }}
           style={{ ...inputStyle, padding: '8px 14px', cursor: 'pointer' }} />
         {heroUploading && (
@@ -485,8 +488,14 @@ export default function ProjectForm({ initialData, projectId, onSave, saving }: 
                     onChange={e => updateBlock(i, { headline: e.target.value })}
                     style={{ ...inputStyle, fontWeight: 500 }}
                   />
+                  <input
+                    placeholder="Subtítulo corto debajo del título (opcional, va en la misma columna)"
+                    value={block.subtitle ?? ''}
+                    onChange={e => updateBlock(i, { subtitle: e.target.value })}
+                    style={inputStyle}
+                  />
                   <textarea
-                    placeholder="Párrafos (dejá una línea en blanco entre párrafos)"
+                    placeholder="Párrafos de la columna derecha (dejá una línea en blanco entre párrafos)"
                     value={block.body ?? ''}
                     onChange={e => updateBlock(i, { body: e.target.value })}
                     rows={5}
