@@ -20,11 +20,30 @@ function MiniArrow() {
 export default function Footer({ minimal = false }: { minimal?: boolean }) {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
+  const [subscribing, setSubscribing] = useState(false);
+  const [subscribeError, setSubscribeError] = useState('');
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubscribed(true);
-    setEmail('');
+    setSubscribing(true);
+    setSubscribeError('');
+    try {
+      const res = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      if (res.ok) {
+        setSubscribed(true);
+        setEmail('');
+      } else {
+        setSubscribeError('Hubo un error. Intentá de nuevo.');
+      }
+    } catch {
+      setSubscribeError('Hubo un error. Intentá de nuevo.');
+    } finally {
+      setSubscribing(false);
+    }
   };
 
   return (
@@ -74,17 +93,23 @@ export default function Footer({ minimal = false }: { minimal?: boolean }) {
               {subscribed ? (
                 <p style={{ fontFamily: 'var(--font)', fontSize: 13, color: 'var(--black)' }}>¡Gracias por suscribirte!</p>
               ) : (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, border: '1px solid var(--black)', borderRadius: 999, padding: '8px 8px 8px 20px' }}>
-                  <input type="email" required placeholder="nombre@mail.com" value={email}
-                    onChange={e => setEmail(e.target.value)}
-                    style={{ flex: 1, background: 'transparent', border: 'none', outline: 'none', color: 'var(--black)', fontFamily: 'var(--font)', fontSize: 14, minWidth: 0 }} />
-                  <button type="submit" aria-label="Suscribirse" style={{
-                    width: 32, height: 32, borderRadius: '50%', background: 'var(--black)', flexShrink: 0,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', cursor: 'pointer', padding: 0,
-                  }}>
-                    <Image src="/images/home/arrowwhite.png" alt="" width={12} height={12} />
-                  </button>
-                </div>
+                <>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, border: '1px solid var(--black)', borderRadius: 999, padding: '8px 8px 8px 20px' }}>
+                    <input type="email" required placeholder="nombre@mail.com" value={email}
+                      onChange={e => setEmail(e.target.value)}
+                      style={{ flex: 1, background: 'transparent', border: 'none', outline: 'none', color: 'var(--black)', fontFamily: 'var(--font)', fontSize: 14, minWidth: 0 }} />
+                    <button type="submit" aria-label="Suscribirse" disabled={subscribing} style={{
+                      width: 32, height: 32, borderRadius: '50%', background: 'var(--black)', flexShrink: 0,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', cursor: 'pointer', padding: 0,
+                      opacity: subscribing ? 0.6 : 1,
+                    }}>
+                      <Image src="/images/home/arrowwhite.png" alt="" width={12} height={12} />
+                    </button>
+                  </div>
+                  {subscribeError && (
+                    <p style={{ fontFamily: 'var(--font)', fontSize: 12, color: '#C8102E', marginTop: 8 }}>{subscribeError}</p>
+                  )}
+                </>
               )}
             </form>
 

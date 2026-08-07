@@ -281,9 +281,9 @@ export default function ProyectoDetalle({ params }: { params: Promise<{ id: stri
   return (
     <main style={{ background: '#fff' }}>
       {/* Hero */}
-      <section style={{ position: 'relative', width: '100%', height: "100vh" }}>
+      <section style={{ position: 'relative', width: '100%', height: '100vh', minHeight: 560 }}>
         {isVideoUrl(project.heroImage || project.coverImage) ? (
-          <video src={project.heroImage || project.coverImage} autoPlay muted loop playsInline style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+          <video src={project.heroImage || project.coverImage} poster={project.coverImage} autoPlay muted loop playsInline style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
         ) : (
           <Image src={project.heroImage || project.coverImage} alt={project.title} fill priority style={{ objectFit: 'cover' }} />
         )}
