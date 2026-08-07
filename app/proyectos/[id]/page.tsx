@@ -259,7 +259,7 @@ export default function ProyectoDetalle({ params }: { params: Promise<{ id: stri
 
   if (loading) return (
     <main style={{ background: '#fff' }}>
-      <Skeleton aspectRatio="1456 / 655" borderRadius={0} />
+      <Skeleton height={"100vh"} borderRadius={0} />
       <section className="hr-section" style={{ padding: '64px 79px 0', maxWidth: 1440, margin: '0 auto' }}>
         <Skeleton height={65} width="40%" style={{ marginBottom: 24 }} />
         <div style={{ display: 'flex', gap: 24 }}>
@@ -281,7 +281,7 @@ export default function ProyectoDetalle({ params }: { params: Promise<{ id: stri
   return (
     <main style={{ background: '#fff' }}>
       {/* Hero */}
-      <section style={{ position: 'relative', width: '100%', aspectRatio: '1456 / 655' }}>
+      <section style={{ position: 'relative', width: '100%', height: "100vh" }}>
         {isVideoUrl(project.heroImage || project.coverImage) ? (
           <video src={project.heroImage || project.coverImage} autoPlay muted loop playsInline style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
         ) : (
