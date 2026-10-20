@@ -1,11 +1,15 @@
 'use client';
 import { useState } from 'react';
 import Image from 'next/image';
+import { whatsappUrl } from '@/lib/contact';
 
 const SOCIALS = [
   { label: 'Instagram', href: 'https://www.instagram.com/grupo_hughesyrienzi/' },
   { label: 'Linkedin', href: 'https://www.linkedin.com/company/grupo-hughes-rienzi/' },
+  { label: 'WhatsApp', href: whatsappUrl() },
 ];
+
+const ADDRESS = 'Carlos F. Saez 6422, Montevideo, Uruguay';
 
 function MiniArrow() {
   return (
@@ -62,31 +66,30 @@ export default function Footer({ minimal = false }: { minimal?: boolean }) {
       }}>
         <div style={{ maxWidth: 1300, margin: '0 auto', paddingTop: 48, borderTop: '1px solid rgba(20,20,20,1)' }}>
 
-          {/* Row 1: GHR logo <-> Comercializa en exclusividad */}
+          {/* Row 1: GHR logo <-> H&R Bienes Raíces */}
           <div className="footer-top-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 24, marginBottom: 32 }}>
             <Image src="/images/home/GHRlogo.svg" alt="GHR" width={170} height={73} style={{ objectFit: 'contain' }} />
             <div className="footer-comercializa" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8 }}>
-              <p style={{ fontFamily: 'var(--font)', fontWeight: 500, fontSize: 13, letterSpacing: '0.04em', color: 'var(--black)', whiteSpace: 'nowrap' }}>
-                Comercializa en exclusividad:
-              </p>
               <Image src="/images/home/logohughesfooter.svg" alt="Hughes & Rienzi Bienes Raíces" width={200} height={57} style={{ objectFit: 'contain' }} />
             </div>
           </div>
 
           {/* Row 2: contacto <-> newsletter <-> redes */}
-          <div className="footer-bottom-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 32 }}>
+          <div className="footer-bottom-row" style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'end', gap: 32 }}>
             <div>
               <p style={{ fontFamily: 'var(--font)', fontSize: 14, color: 'var(--black)', lineHeight: '24px' }}>
-                +598 2601 7836<br />
-                +598 099 919 535<br />
-                info@hr.com.uy
+                <a href="tel:+59826017836" className="hr-footer-contact">+598 2601 7836</a><br />
+                <a href="tel:+59899919535" className="hr-footer-contact">+598 099 919 535</a><br />
+                <a href="mailto:info@hr.com.uy" className="hr-footer-contact">info@hr.com.uy</a>
               </p>
               <p style={{ fontFamily: 'var(--font)', fontSize: 14, color: 'var(--black)', marginTop: 12, lineHeight: '24px' }}>
-                Carlos F. Saez 6422, Oficina 101,<br />Montevideo, Uruguay
+                <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(ADDRESS)}`} target="_blank" rel="noopener noreferrer" className="hr-footer-contact">
+                  Carlos F. Saez 6422,<br />Montevideo, Uruguay
+                </a>
               </p>
             </div>
 
-            <form onSubmit={handleSubscribe} style={{ textAlign: 'center', width: '100%', maxWidth: 280 }}>
+            <form onSubmit={handleSubscribe} style={{ textAlign: 'center', width: 280 }}>
               <p style={{ fontFamily: 'var(--font)', fontWeight: 500, fontSize: 14, color: 'var(--black)', marginBottom: 8 }}>
                 Suscribite a nuestra newsletter
               </p>
@@ -133,16 +136,22 @@ export default function Footer({ minimal = false }: { minimal?: boolean }) {
 
       <style>{`
         .hr-footer-social:hover { opacity: 0.6; }
+        .hr-footer-contact { color: inherit; transition: opacity 0.25s ease; }
+        .hr-footer-contact:hover { opacity: 0.6; }
         .hr-footer-social:hover .hr-footer-social-arrow { transform: scale(1.15) rotate(45deg); background: var(--black); border-color: var(--black); }
         .hr-footer-social:hover .hr-footer-social-arrow-img { filter: invert(1); }
         @media (max-width: 768px) {
-          .hr-proyectos-section { padding: 48px 20px 0 !important; }
-          .footer-inner { padding: 48px 20px 24px !important; }
-          .footer-top-row { flex-direction: column !important; gap: 32px !important; align-items: flex-start !important; }
-          .footer-comercializa { flex-direction: column !important; align-items: flex-start !important; gap: 12px !important; }
-          .footer-bottom-row { flex-direction: column !important; gap: 32px !important; }
-          .footer-bottom-row form { text-align: left !important; max-width: 100% !important; }
-          .footer-socials { align-items: flex-start !important; }
+          /* The project logos strip is unreadable at phone size */
+          .hr-proyectos-section { display: none !important; }
+          .footer-inner { padding: 32px 20px 24px !important; }
+          .footer-inner > div { padding-top: 32px !important; }
+          .footer-top-row { flex-direction: column !important; gap: 16px !important; align-items: center !important; margin-bottom: 24px !important; }
+          .footer-top-row img { width: auto !important; height: 36px !important; }
+          .footer-comercializa { align-items: center !important; }
+          .footer-bottom-row { grid-template-columns: 1fr !important; gap: 24px !important; justify-items: center; text-align: center; }
+          .footer-bottom-row p { font-size: 13px !important; line-height: 20px !important; }
+          .footer-bottom-row form { width: 100% !important; max-width: 280px; }
+          .footer-socials { flex-direction: row !important; align-items: center !important; gap: 20px !important; }
         }
       `}</style>
     </footer>

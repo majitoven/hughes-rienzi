@@ -41,19 +41,22 @@ export default function Navbar() {
         transition: 'background 0.4s',
       }}>
         {dark && <div className="hr-nav-divider" style={{ position: 'absolute', bottom: 0, left: 48, right: 48, height: 1, background: 'var(--black)' }} />}
-        <Link href="/" style={{ display: 'flex' }}>
+        <Link href="/" style={{ display: 'flex' }} aria-label="Grupo Hughes & Rienzi">
           <Image
             src={dark ? '/images/home/Logo_GRUPO_BLANCOseccionitau.png' : '/images/home/logoheader.png'}
             alt="Grupo Hughes & Rienzi" width={135} height={137} className="hr-nav-logo"
-            style={{ width: 'auto', height: 78 }} priority />
+            style={{ width: 'auto', height: 90 }} priority />
+          {/* Mobile shows the short GHR mark instead of the full logo */}
+          <Image src="/images/home/GHRlogo.svg" alt="GHR" width={194} height={83} className="hr-nav-logo-mobile"
+            style={{ display: 'none', width: 'auto', height: 30, filter: dark ? 'none' : 'invert(1)' }} priority />
         </Link>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 40 }}>
           <div className="hr-nav-links" style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
             {links.map(l => (
-              <Link key={l.href} href={l.href} className="hr-nav-link" style={{
+              <Link key={l.href} href={l.href} className={`hr-nav-link${pathname === l.href ? ' hr-nav-link--active' : ''}`} style={{
                 fontFamily: 'var(--font)', fontSize: 14, fontWeight: 400,
-                color: textColor, opacity: pathname === l.href ? 0.6 : 0.95,
+                color: textColor, opacity: 0.95,
               }}>{l.label}</Link>
             ))}
           </div>
@@ -91,7 +94,7 @@ export default function Navbar() {
 
       <style>{`
         .hr-nav-link { transition: text-shadow 0.25s ease, opacity 0.25s ease; }
-        .hr-nav-link:hover {
+        .hr-nav-link:hover, .hr-nav-link--active {
           text-shadow: -0.4px 0 currentColor, 0.4px 0 currentColor, 0 -0.4px currentColor, 0 0.4px currentColor;
           opacity: 1 !important;
         }
@@ -100,7 +103,8 @@ export default function Navbar() {
           .hr-nav-links { display: none !important; }
           .hr-nav-cta { display: none !important; }
           .hr-hamburger { display: flex !important; }
-          .hr-nav-logo { width: 64px !important; height: auto !important; }
+          .hr-nav-logo { display: none !important; }
+          .hr-nav-logo-mobile { display: block !important; }
           .hr-nav-divider { left: 20px !important; right: 20px !important; }
         }
       `}</style>

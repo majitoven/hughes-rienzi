@@ -81,7 +81,7 @@ input, textarea { font-family: var(--font); }
 .hr-abtn--white { background: #fff; color: var(--black); border: 1px solid #fff; }
 .hr-abtn--white .hr-abtn-circle { background: var(--black); }
 .hr-abtn--white .hr-abtn-circle img { filter: invert(1); }
-.hr-abtn--white:hover { background: var(--black); color: #fff; }
+.hr-abtn--white:hover { background: var(--black); color: #fff; border-color: var(--black); }
 .hr-abtn--white:hover .hr-abtn-circle { background: #fff; }
 .hr-abtn--white:hover .hr-abtn-circle img { filter: none; }
 

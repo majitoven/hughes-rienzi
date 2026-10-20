@@ -44,6 +44,9 @@ export default function ArrowButton({ href, onClick, children, variant = 'dark',
     </>
   );
 
+  if (href && external) return (
+    <a href={href} target="_blank" rel="noopener noreferrer" className={className} style={{ fontSize: fontSize ?? 14 }}>{content}</a>
+  );
   if (href) return (
     <Link href={href} className={className} style={{ fontSize: fontSize ?? 14 }}>{content}</Link>
   );

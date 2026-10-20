@@ -74,8 +74,26 @@ export default function BlogPostDetalle({ params }: { params: Promise<{ id: stri
         )}
 
         <FadeIn>
-          <div style={{ fontFamily: 'var(--font)', fontWeight: 300, fontSize: 18, lineHeight: '28px', whiteSpace: 'pre-wrap', marginBottom: 48 }}>
-            {post.content}
+          <div className="hr-blog-content" style={{ marginBottom: 48 }}>
+            {post.content.split(/\n\s*\n/).filter(p => p.trim()).map((para, i) => {
+              const [first, ...rest] = para.trim().split('\n');
+              // Interview format: "01. ¿Pregunta?" on the first line, answer below
+              const isQuestion = /^\d{1,2}\.\s/.test(first);
+              return (
+                <div key={i} style={{ marginBottom: 28 }}>
+                  {isQuestion ? (
+                    <>
+                      <p style={{ fontFamily: 'var(--font)', fontWeight: 500, fontSize: 16, lineHeight: '24px', textTransform: 'uppercase', marginBottom: 8 }}>{first}</p>
+                      {rest.map((line, j) => (
+                        <p key={j} style={{ fontFamily: 'var(--font)', fontWeight: 300, fontSize: 18, lineHeight: '28px', marginBottom: 8 }}>{line}</p>
+                      ))}
+                    </>
+                  ) : (
+                    <p style={{ fontFamily: 'var(--font)', fontWeight: 300, fontSize: 18, lineHeight: '28px', whiteSpace: 'pre-wrap' }}>{para.trim()}</p>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </FadeIn>
 

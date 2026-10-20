@@ -181,7 +181,7 @@ export default function BlogForm({ initialData, postId, onSave, saving }: Props)
         <SectionTitle>Contenido</SectionTitle>
         <textarea required rows={12} value={content} onChange={e => setContent(e.target.value)}
           style={{ ...inputStyle, resize: 'vertical', fontSize: 14, lineHeight: '22px' }}
-          placeholder="Texto completo de la nota" />
+          placeholder={"Para entrevistas: cada pregunta empieza con su número y la respuesta va en la línea de abajo. Dejá una línea en blanco entre preguntas.\n\n01. ¿Pregunta?\nRespuesta...\n\n02. ¿Otra pregunta?\nRespuesta..."} />
       </div>
 
       <div style={sectionStyle}>

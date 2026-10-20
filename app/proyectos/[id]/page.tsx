@@ -1,5 +1,6 @@
 'use client';
-import { use, useEffect, useState } from 'react';
+import { use, useCallback, useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { getDoc, doc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Project, ProjectBlock } from '@/lib/types';
@@ -15,145 +16,160 @@ function isVideoUrl(url: string) {
   return /\.(mp4|webm|mov)$/i.test(url);
 }
 
-function Media({ src, alt }: { src: string; alt: string }) {
-  return isVideoUrl(src)
-    ? <video src={src} autoPlay muted loop playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-    : <Image src={src} alt={alt} fill style={{ objectFit: 'cover' }} />;
+// Fills its (relatively positioned) parent and shows a shimmer skeleton until the image/video has loaded.
+function Media({ src, alt, sizes, priority, fit = 'cover', controls, dark }: {
+  src: string; alt: string; sizes?: string; priority?: boolean; fit?: 'cover' | 'contain'; controls?: boolean; dark?: boolean;
+}) {
+  const [loadedSrc, setLoadedSrc] = useState<string | null>(null);
+  const loaded = loadedSrc === src;
+  const onLoad = () => setLoadedSrc(src);
+  const mediaStyle: React.CSSProperties = { objectFit: fit, opacity: loaded ? 1 : 0, transition: 'opacity 0.5s ease' };
+  return (
+    <>
+      {!loaded && <div className="hr-skeleton" style={{ position: 'absolute', inset: 0, opacity: dark ? 0.15 : 1 }} />}
+      {isVideoUrl(src)
+        ? <video src={src} autoPlay muted loop playsInline controls={controls} onLoadedData={onLoad}
+            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', ...mediaStyle }} />
+        : <Image src={src} alt={alt} fill sizes={sizes} priority={priority} onLoad={onLoad} style={mediaStyle} />}
+    </>
+  );
 }
 
+function ArrowCircle({ dir }: { dir: 'prev' | 'next' }) {
+  return (
+    <span style={{ display: 'inline-flex', transform: `rotate(${dir === 'prev' ? 225 : 45}deg)` }}>
+      <Image src="/images/home/arrowwhite.png" alt="" width={10} height={10} />
+    </span>
+  );
+}
+
+function Lightbox({ images, index, title, onClose, onNav }: { images: string[]; index: number; title: string; onClose: () => void; onNav: (dir: 1 | -1) => void }) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+      if (e.key === 'ArrowLeft') onNav(-1);
+      if (e.key === 'ArrowRight') onNav(1);
+    };
+    window.addEventListener('keydown', onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { window.removeEventListener('keydown', onKey); document.body.style.overflow = prevOverflow; };
+  }, [onClose, onNav]);
+
+  const src = images[index];
+  return createPortal(
+    <div role="dialog" aria-modal="true" onClick={onClose} style={{ position: 'fixed', inset: 0, zIndex: 100, background: 'rgba(0,0,0,0.88)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '64px 80px' }} className="hr-lightbox">
+      <div key={index} className="hr-gallery-fade" onClick={e => e.stopPropagation()} style={{ position: 'relative', width: '100%', height: '100%' }}>
+        <Media src={src} alt={title} sizes="100vw" fit="contain" controls dark />
+      </div>
+      <button type="button" aria-label="Cerrar" onClick={onClose} style={{ position: 'absolute', top: 20, right: 24, background: 'none', border: 'none', color: '#fff', fontSize: 28, lineHeight: 1, cursor: 'pointer' }}>✕</button>
+      {images.length > 1 && (
+        <>
+          <button type="button" aria-label="Foto anterior" onClick={e => { e.stopPropagation(); onNav(-1); }} className="hr-gallery-arrow" style={{ left: 24 }}><ArrowCircle dir="prev" /></button>
+          <button type="button" aria-label="Foto siguiente" onClick={e => { e.stopPropagation(); onNav(1); }} className="hr-gallery-arrow" style={{ right: 24 }}><ArrowCircle dir="next" /></button>
+        </>
+      )}
+    </div>,
+    document.body,
+  );
+}
+
+function MapEmbed({ title, query }: { title: string; query: string }) {
+  const [loaded, setLoaded] = useState(false);
+  return (
+    <>
+      {!loaded && <div className="hr-skeleton" style={{ position: 'absolute', inset: 0 }} />}
+      <iframe
+        title={`Mapa de ${title}`}
+        src={`https://www.google.com/maps?q=${encodeURIComponent(query)}&z=15&output=embed`}
+        loading="lazy" referrerPolicy="no-referrer-when-downgrade" allowFullScreen onLoad={() => setLoaded(true)}
+        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0, filter: 'grayscale(1)', opacity: loaded ? 1 : 0, transition: 'opacity 0.5s ease' }} />
+    </>
+  );
+}
+
+const GALLERY_GAP = 16;
+
 function GalleryBlock({ images, title }: { images: string[]; title: string }) {
-  const [active, setActive] = useState(0);
+  const [start, setStart] = useState(0);
+  const [perView, setPerView] = useState(3);
+  const [open, setOpen] = useState<number | null>(null);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 900px)');
+    const update = () => setPerView(mq.matches ? 1 : 3);
+    update();
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
+  }, []);
+
+  const maxStart = Math.max(0, images.length - perView);
+  const pos = Math.min(start, maxStart);
+
+  const navLightbox = useCallback((dir: 1 | -1) => setOpen(o => o === null ? o : (o + dir + images.length) % images.length), [images.length]);
+  const closeLightbox = useCallback(() => setOpen(null), []);
 
   if (images.length === 0) return null;
-  const go = (dir: 1 | -1) => setActive(a => (a + dir + images.length) % images.length);
-  const thumbCount = Math.min(3, images.length - 1);
-  const thumbIndexes = Array.from({ length: thumbCount }, (_, i) => (active + 1 + i) % images.length);
 
   return (
     <FadeIn>
-      <div style={{ margin: '24px 0' }}>
-        <div style={{ position: 'relative', width: '100%', aspectRatio: '1288 / 945', overflow: 'hidden', marginBottom: 16 }}>
-          <div key={active} className="hr-gallery-fade" style={{ position: 'absolute', inset: 0 }}>
-            <Media src={images[active]} alt={title} />
-          </div>
-          {images.length > 1 && (
-        <>
-  <button
-    type="button"
-    aria-label="Foto anterior"
-    onClick={() => go(-1)}
-    className="hr-gallery-arrow"
-    style={{
-      position: 'absolute',
-      left: 12,
-      top: '50%',
-      transform: 'translateY(-50%)',
-      width: 30,
-      height: 30,
-      borderRadius: '50%',
-      background: 'rgba(255,255,255,0.35)',
-      border: 'none',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      cursor: 'pointer',
-      transition: 'background 0.25s ease, transform 0.25s ease',
-    }}
-  >
-    <span
-      style={{
-        display: 'inline-flex',
-        transform: 'rotate(225deg)',
-      }}
-    >
-      <Image
-        src="/images/home/arrowblack.png"
-        alt=""
-        width={8}
-        height={8}
-      />
-    </span>
-  </button>
-
-  <button
-    type="button"
-    aria-label="Foto siguiente"
-    onClick={() => go(1)}
-    className="hr-gallery-arrow"
-    style={{
-      position: 'absolute',
-      right: 12,
-      top: '50%',
-      transform: 'translateY(-50%)',
-      width: 30,
-      height: 30,
-      borderRadius: '50%',
-      background: 'rgba(255,255,255,0.35)',
-      border: 'none',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      cursor: 'pointer',
-      transition: 'background 0.25s ease, transform 0.25s ease',
-    }}
-  >
-    <span
-      style={{
-        display: 'inline-flex',
-        transform: 'rotate(45deg)',
-      }}
-    >
-      <Image
-        src="/images/home/arrowblack.png"
-        alt=""
-        width={8}
-        height={8}
-      />
-    </span>
-  </button>
-      </>
-          )}
-        </div>
-        {thumbIndexes.length > 0 && (
-          <div className="hr-gallery-thumbs" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
-            {thumbIndexes.map(idx => (
-              <button key={idx} type="button" onClick={() => setActive(idx)} className="hr-gallery-thumb" style={{
-                position: 'relative', width: '100%', aspectRatio: '4 / 3', overflow: 'hidden',
-                border: 'none', padding: 0, cursor: 'pointer', background: 'none',
+      <div style={{ position: 'relative', margin: '56px 0' }}>
+        <div style={{ overflow: 'hidden', borderRadius: 18 }}>
+          <div style={{ display: 'flex', gap: GALLERY_GAP, transform: `translateX(calc(${-pos} * (100% + ${GALLERY_GAP}px) / ${perView}))`, transition: 'transform 0.5s ease' }}>
+            {images.map((src, i) => (
+              <button key={i} type="button" onClick={() => setOpen(i)} aria-label={`Ver foto ${i + 1}`} className="hr-gallery-thumb" style={{
+                position: 'relative', flex: `0 0 calc((100% - ${(perView - 1) * GALLERY_GAP}px) / ${perView})`, aspectRatio: '297 / 172',
+                borderRadius: 18, overflow: 'hidden', border: 'none', padding: 0, cursor: 'zoom-in', background: '#f0f0f0',
               }}>
-                <div style={{ position: 'absolute', inset: 0, transition: 'transform 0.3s ease' }}>
-                  <Media src={images[idx]} alt={title} />
+                <div style={{ position: 'absolute', inset: 0, transition: 'transform 0.4s ease' }}>
+                  <Media src={src} alt={title} sizes="(max-width: 900px) 100vw, 33vw" />
                 </div>
               </button>
             ))}
           </div>
+        </div>
+        {maxStart > 0 && (
+          <>
+            <button type="button" aria-label="Fotos anteriores" disabled={pos === 0} onClick={() => setStart(Math.max(0, pos - 1))} className="hr-gallery-arrow" style={{ left: -18 }}><ArrowCircle dir="prev" /></button>
+            <button type="button" aria-label="Fotos siguientes" disabled={pos === maxStart} onClick={() => setStart(Math.min(maxStart, pos + 1))} className="hr-gallery-arrow" style={{ right: -18 }}><ArrowCircle dir="next" /></button>
+          </>
         )}
       </div>
+      {open !== null && <Lightbox images={images} index={open} title={title} onClose={closeLightbox} onNav={navLightbox} />}
     </FadeIn>
   );
 }
 
-function ContentBlock({ block, title, externalUrl }: { block: ProjectBlock; title: string; externalUrl?: string }) {
+const bodyStyle: React.CSSProperties = { fontFamily: 'var(--font)', fontWeight: 300, fontSize: 21, lineHeight: '28px', color: 'var(--black)', textAlign: 'justify' };
+
+function Paragraphs({ text }: { text?: string }) {
+  return (
+    <>
+      {(text ?? '').split('\n\n').filter(Boolean).map((para, i) => (
+        <p key={i} style={{ ...bodyStyle, marginBottom: 20 }}>{para}</p>
+      ))}
+    </>
+  );
+}
+
+function ContentBlock({ block, title, cta }: { block: ProjectBlock; title: string; cta?: React.ReactNode }) {
   if (block.type === 'text') {
     return (
       <FadeIn>
-        <div className="hr-project-text-block" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 80, padding: '56px 0' }}>
+        <div className="hr-project-text-block" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 80, padding: '40px 0' }}>
           <div>
-            <p style={{ fontFamily: 'var(--font)', fontWeight: 500, fontSize: 45, lineHeight: '47px', color: 'var(--black)' }}>
+            <h2 style={{ fontFamily: 'var(--font)', fontWeight: 500, fontSize: 45, lineHeight: '47px', color: 'var(--black)' }}>
               {block.headline}
-            </p>
+            </h2>
             {block.subtitle && (
-              <p style={{ fontFamily: 'var(--font)', fontWeight: 400, fontSize: 18, lineHeight: '24px', color: 'var(--black)', marginTop: 20 }}>
+              <p style={{ fontFamily: 'var(--font)', fontWeight: 400, fontSize: 18, lineHeight: '24px', color: 'var(--black)', marginTop: 20, maxWidth: 520 }}>
                 {block.subtitle}
               </p>
             )}
+            {cta && <div style={{ marginTop: 40 }}>{cta}</div>}
           </div>
           <div>
-            {(block.body ?? '').split('\n\n').map((para, i) => (
-              <p key={i} style={{ fontFamily: 'var(--font)', fontWeight: 300, fontSize: 21, lineHeight: '28px', color: 'var(--black)', marginBottom: 16 }}>
-                {para}
-              </p>
-            ))}
+            <Paragraphs text={block.body} />
           </div>
         </div>
       </FadeIn>
@@ -163,14 +179,9 @@ function ContentBlock({ block, title, externalUrl }: { block: ProjectBlock; titl
   if (block.type === 'phrase') {
     return (
       <FadeIn>
-        <div className="hr-project-phrase" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 24, padding: '40px 0', flexWrap: 'wrap' }}>
-          <p style={{ fontFamily: 'var(--font)', fontWeight: 500, fontSize: 32, lineHeight: '38px', color: 'var(--black)' }}>
-            {block.headline}
-          </p>
-          {externalUrl && (
-            <ArrowButton href={externalUrl} variant="dark" split external>Ir al sitio web</ArrowButton>
-          )}
-        </div>
+        <p style={{ fontFamily: 'var(--font)', fontWeight: 500, fontSize: 32, lineHeight: '38px', color: 'var(--black)', padding: '40px 0' }}>
+          {block.headline}
+        </p>
       </FadeIn>
     );
   }
@@ -178,24 +189,26 @@ function ContentBlock({ block, title, externalUrl }: { block: ProjectBlock; titl
   if (block.type === 'amenities') {
     const items = block.amenities ?? [];
     if (items.length === 0) return null;
-    const cols = block.amenitiesColumns ?? 2;
-    const mid = Math.ceil(items.length / 2);
-    const columns = cols === 2 ? [items.slice(0, mid), items.slice(mid)] : [items];
     return (
       <FadeIn>
-        <div style={{ padding: '40px 0' }}>
-          <p style={{ fontFamily: 'var(--font)', fontWeight: 400, fontSize: 29, letterSpacing: '0.1em', color: 'var(--black)', textTransform: 'uppercase', marginBottom: 20 }}>
-            AMENITIES
-          </p>
-          <div className="hr-amenities-grid" style={{ display: 'grid', gridTemplateColumns: cols === 2 ? '1fr 1fr' : '1fr', gap: '0 64px' }}>
-            {columns.map((col, ci) => (
-              <div key={ci}>
-                {col.map((item, ii) => (
-                  <p key={ii} style={{ fontFamily: 'var(--font)', fontWeight: 400, fontSize: 16, color: 'var(--black)', padding: '14px 0', textTransform: 'uppercase', borderBottom: '1px solid rgba(20,20,20,0.12)', borderTop:    ii === 0 ? '1px solid rgba(20,20,20,0.12)' : 'none' }}>
-                    {item}
-                  </p>
-                ))}
-              </div>
+        <div className="hr-project-text-block" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 80, padding: '40px 0' }}>
+          <div>
+            {block.headline && (
+              <h2 style={{ fontFamily: 'var(--font)', fontWeight: 500, fontSize: 45, lineHeight: '47px', color: 'var(--black)', marginBottom: 32 }}>
+                {block.headline}
+              </h2>
+            )}
+            <Paragraphs text={block.body} />
+            {cta && <div style={{ marginTop: 20 }}>{cta}</div>}
+          </div>
+          <div style={{ paddingTop: block.headline ? 12 : 0 }}>
+            <p style={{ fontFamily: 'var(--font)', fontWeight: 400, fontSize: 29, color: 'var(--black)', textTransform: 'uppercase', marginBottom: 12 }}>
+              AMENITIES
+            </p>
+            {items.map((item, i) => (
+              <p key={i} style={{ fontFamily: 'var(--font)', fontWeight: 300, fontSize: 18, letterSpacing: '0.02em', color: 'var(--black)', padding: '16px 0', textTransform: 'uppercase', borderBottom: '1px solid rgba(20,20,20,0.7)' }}>
+                {item}
+              </p>
             ))}
           </div>
         </div>
@@ -207,25 +220,16 @@ function ContentBlock({ block, title, externalUrl }: { block: ProjectBlock; titl
     return <GalleryBlock images={block.images ?? []} title={title} />;
   }
 
-  const images = block.images ?? [];
+  // 'images': thin strip of photos that works as a visual separator between sections
+  const images = (block.images ?? []).slice(0, 2);
   if (images.length === 0) return null;
-
-  if (images.length === 1) {
-    return (
-      <FadeIn>
-        <div style={{ position: 'relative', width: '100%', aspectRatio: '1288 / 945', overflow: 'hidden', margin: '24px 0' }}>
-          <Media src={images[0]} alt={title} />
-        </div>
-      </FadeIn>
-    );
-  }
 
   return (
     <FadeIn>
-      <div className="hr-project-image-pair" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, margin: '24px 0' }}>
-        {images.slice(0, 2).map((src, i) => (
-          <div key={i} style={{ position: 'relative', width: '100%', aspectRatio: '4 / 3', overflow: 'hidden' }}>
-            <Media src={src} alt={title} />
+      <div className="hr-project-image-pair" style={{ display: 'grid', gridTemplateColumns: `repeat(${images.length}, 1fr)`, gap: 32, margin: '40px 0' }}>
+        {images.map((src, i) => (
+          <div key={i} style={{ position: 'relative', width: '100%', aspectRatio: images.length === 2 ? '442 / 198' : '1288 / 300', borderRadius: 18, overflow: 'hidden' }}>
+            <Media src={src} alt={title} sizes="(max-width: 900px) 100vw, 50vw" />
           </div>
         ))}
       </div>
@@ -278,84 +282,121 @@ export default function ProyectoDetalle({ params }: { params: Promise<{ id: stri
     </main>
   );
 
+  const heroSrc = project.heroImage || project.coverImage;
+  // Embedded map: reuse the search query of the Google Maps link; short links (maps.app.goo.gl) can't be embedded,
+  // so those fall back to the project name + location.
+  const mapQuery = (() => {
+    if (!project.mapsUrl && !project.location) return null;
+    try {
+      const q = project.mapsUrl && new URL(project.mapsUrl).searchParams.get('query');
+      if (q) return q;
+    } catch {}
+    return [project.title, project.subtitle, project.location, 'Uruguay'].filter(Boolean).join(', ');
+  })();
+  // Brochure button goes under the first text block; website button next to the amenities
+  // (falls back to the last text block, or to the end of the page if neither exists).
+  const brochureIndex = project.brochureUrl ? project.content.findIndex(b => b.type === 'text') : -1;
+  const amenitiesIndex = project.content.findIndex(b => b.type === 'amenities' && (b.amenities?.length ?? 0) > 0);
+  const lastTextIndex = project.content.map(b => b.type).lastIndexOf('text');
+  const websiteIndex = !project.externalUrl ? -1
+    : amenitiesIndex !== -1 ? amenitiesIndex
+    : lastTextIndex !== brochureIndex ? lastTextIndex : -1;
+  const brochureButton = project.brochureUrl
+    ? <ArrowButton href={project.brochureUrl} variant="dark" external>Descargar brochure</ArrowButton> : null;
+  const websiteButton = project.externalUrl
+    ? <ArrowButton href={project.externalUrl} variant="dark" external>Visitar Sitio Web</ArrowButton> : null;
+
   return (
     <main style={{ background: '#fff' }}>
       {/* Hero */}
       <section style={{ position: 'relative', width: '100%', height: '100vh', minHeight: 560 }}>
-        {isVideoUrl(project.heroImage || project.coverImage) ? (
-          <video src={project.heroImage || project.coverImage} poster={project.coverImage} autoPlay muted loop playsInline style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
-        ) : (
-          <Image src={project.heroImage || project.coverImage} alt={project.title} fill priority style={{ objectFit: 'cover' }} />
-        )}
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.05) 40%, rgba(0,0,0,0.35) 100%)' }} />
+        <Media src={heroSrc} alt={project.title} sizes="100vw" priority />
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.25) 40%, rgba(0,0,0,0.55) 100%)' }} />
         <div style={{ position: 'relative', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#fff', textAlign: 'center' }}>
           <FadeIn>
             {project.logoImage ? (
               <Image src={project.logoImage} alt={project.title} width={490} height={212} style={{ width: 'auto', height: 96, objectFit: 'contain' }} />
             ) : (
               <>
-                <p style={{ fontFamily: 'var(--font)', fontWeight: 600, fontSize: 56, letterSpacing: '0.02em' }}>{project.title}</p>
+                <h1 style={{ fontFamily: 'var(--font)', fontWeight: 600, fontSize: 56, letterSpacing: '0.02em' }}>{project.title}</h1>
                 <p style={{ fontFamily: 'var(--font)', fontWeight: 400, fontSize: 18, letterSpacing: '0.2em', textTransform: 'uppercase' }}>{project.subtitle}</p>
               </>
             )}
           </FadeIn>
         </div>
+        {project.facts.length > 0 && (
+          <div className="hr-project-facts" style={{ position: 'absolute', left: 0, right: 0, bottom: 56, paddingLeft: 79, display: 'flex', flexWrap: 'nowrap', justifyContent: 'space-between', gap: 24, color: '#fff', width: 'calc(70% + 79px)', maxWidth: '100%', boxSizing: 'border-box' }}>
+            {project.facts.map(f => (
+              <p key={f.id} style={{ fontFamily: 'var(--font)', fontSize: 15, lineHeight: '20px', whiteSpace: 'nowrap' }}>
+                <span style={{ fontWeight: 600 }}>{f.label}</span>
+                <span style={{ fontWeight: 300, marginLeft: 8, opacity: 0.9 }}>{f.value}</span>
+              </p>
+            ))}
+          </div>
+        )}
       </section>
 
-      {/* Back link */}
-      <section className="hr-section" style={{ padding: '24px 79px 0', maxWidth: 1440, margin: '0 auto', textAlign: 'right' }}>
-        <Link href="/proyectos" style={{ fontFamily: 'var(--font)', fontSize: 14, color: 'var(--text-muted)', textDecoration: 'none' }}>
-          ← Volver a Proyectos
-        </Link>
-      </section>
+      <section className="hr-section" style={{ padding: '32px 79px 80px', maxWidth: 1440, margin: '0 auto' }}>
+        <div style={{ textAlign: 'right' }}>
+          <Link href="/proyectos" className="hr-back-link" style={{ fontFamily: 'var(--font)', fontSize: 14, color: 'var(--black)', textDecoration: 'none' }}>
+            ← Volver a Proyectos
+          </Link>
+        </div>
 
-      {/* Title + facts */}
-      <section className="hr-section" style={{ padding: '20px 79px 0', maxWidth: 1440, margin: '0 auto' }}>
-        <FadeIn>
-          <h1 style={{ fontFamily: 'var(--font)', fontWeight: 500, fontSize: 52, lineHeight: '52px', marginBottom: 40 }}>
-            {project.title} {project.subtitle}
-          </h1>
-          {project.facts.length > 0 && (
-            <div className="hr-project-facts" style={{ display: 'flex', flexWrap: 'nowrap', justifyContent: 'flex-start', width: '100%', gap: '8px 24px' }}>
-              {project.facts.map(f => (
-                <p key={f.id} style={{ fontFamily: 'var(--font)', fontWeight: 500, fontSize: 15, lineHeight: '20px', whiteSpace: 'nowrap' }}>
-                  <span style={{ color: 'var(--black)' }}>{f.label}</span>{'  '}
-                  <span style={{ color:  'var(--text-muted)', fontWeight: 400}}>{f.value}</span>
-                </p>
-              ))}
-            </div>
-          )}
-        </FadeIn>
-      </section>
-
-      {/* Dynamic content blocks */}
-      <section className="hr-section" style={{ padding: '32px 79px 80px', paddingTop:0, maxWidth: 1440, margin: '0 auto' }}>
-        {project.content.map(block => (
-          <ContentBlock key={block.id} block={block} title={project.title} externalUrl={project.externalUrl} />
+        {project.content.map((block, i) => (
+          <ContentBlock key={block.id} block={block} title={project.title}
+            cta={i === brochureIndex ? brochureButton : i === websiteIndex ? websiteButton : undefined} />
         ))}
 
-        <div style={{ textAlign: 'center', paddingTop: 40, display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
-          {project.externalUrl && !project.content.some(b => b.type === 'phrase') && (
-            <ArrowButton href={project.externalUrl} variant="dark" split external>Ir al sitio web</ArrowButton>
-          )}
-          <ArrowButton href="/proyectos" variant="dark" split>Volver a proyectos</ArrowButton>
-        </div>
+        {(brochureIndex === -1 && brochureButton) || (websiteIndex === -1 && websiteButton) ? (
+          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', paddingTop: 24 }}>
+            {brochureIndex === -1 && brochureButton}
+            {websiteIndex === -1 && websiteButton}
+          </div>
+        ) : null}
+
+        {(project.mapImage || mapQuery) && (
+          <FadeIn>
+            <div style={{ paddingTop: 24, textAlign: 'center' }}>
+              <div className="hr-project-map" style={{ position: 'relative', width: '100%', aspectRatio: '920 / 335', borderRadius: 18, overflow: 'hidden', border: '1px solid var(--black)', marginBottom: 32, background: '#f0f0f0' }}>
+                {project.mapImage ? (
+                  <Media src={project.mapImage} alt={`Ubicación de ${project.title}`} sizes="(max-width: 900px) 100vw, 1288px" />
+                ) : (
+                  <MapEmbed title={project.title} query={mapQuery!} />
+                )}
+              </div>
+              {project.mapsUrl && (
+                <ArrowButton href={project.mapsUrl} variant="dark" external>Ver en Google Maps</ArrowButton>
+              )}
+            </div>
+          </FadeIn>
+        )}
       </section>
 
       <Footer minimal />
 
       <style>{`
-        .hr-gallery-fade { animation: hr-gallery-fadein 1.2s ease; }
+        .hr-gallery-fade { animation: hr-gallery-fadein 0.6s ease; }
         @keyframes hr-gallery-fadein { from { opacity: 0; } to { opacity: 1; } }
-        .hr-gallery-arrow:hover { background: rgba(255,255,255,0.6); transform: translateY(-50%) scale(1.15); }
+        .hr-gallery-arrow {
+          position: absolute; top: 50%; transform: translateY(-50%); z-index: 2;
+          width: 36px; height: 36px; border-radius: 50%; background: var(--black); border: none;
+          display: flex; align-items: center; justify-content: center; cursor: pointer;
+          transition: transform 0.25s ease, opacity 0.25s ease;
+        }
+        .hr-gallery-arrow:hover:not(:disabled) { transform: translateY(-50%) scale(1.12); }
+        .hr-gallery-arrow:disabled { opacity: 0.25; cursor: default; }
+        .hr-lightbox .hr-gallery-arrow { background: #fff; width: 44px; height: 44px; }
+        .hr-lightbox .hr-gallery-arrow img { filter: invert(1); }
         .hr-gallery-thumb:hover > div { transform: scale(1.06); }
+        .hr-back-link:hover { opacity: 0.6; }
         @media (max-width: 900px) {
           .hr-section { padding-left: 20px !important; padding-right: 20px !important; }
           .hr-project-text-block, .hr-project-image-pair { grid-template-columns: 1fr !important; gap: 24px !important; }
-          .hr-project-facts { flex-wrap: wrap !important; gap: 10px 20px !important; justify-content: flex-start !important; }
-          .hr-project-phrase { flex-direction: column !important; align-items: flex-start !important; gap: 16px !important; }
-          .hr-amenities-grid { grid-template-columns: 1fr !important; }
-          .hr-gallery-thumbs { grid-template-columns: 1fr 1fr !important; }
+          .hr-project-facts { padding: 0 20px !important; flex-wrap: wrap !important; gap: 8px 20px !important; bottom: 32px !important; width: 100% !important; min-width: 0 !important; justify-content: flex-start !important; }
+          .hr-gallery-arrow[aria-label^="Fotos"] { width: 32px; height: 32px; }
+          .hr-lightbox { padding: 56px 12px !important; }
+          .hr-project-map { aspect-ratio: 4 / 3 !important; }
         }
       `}</style>
     </main>

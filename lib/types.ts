@@ -8,6 +8,9 @@ export interface Project {
   logoImage?: string;
   status?: string;
   externalUrl?: string;
+  brochureUrl?: string;
+  mapsUrl?: string;
+  mapImage?: string;
   facts: ProjectFact[];
   content: ProjectBlock[];
   featured: boolean;

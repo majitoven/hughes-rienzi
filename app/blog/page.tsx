@@ -37,12 +37,15 @@ export default function Blog() {
 
   return (
     <main style={{ background: '#fff' }}>
-      <section className="hr-section" style={{ padding: '200px 79px 96px', maxWidth: 1440, margin: '0 auto' }}>
-        <div style={{ marginBottom: 80 }}>
-          <FadeIn direction="right">
-            <Image src="/images/charlas/Logo-ENTRE-CHARLAS 2.png" alt="Entre Charlas" width={300} height={190} style={{ width: '100%', maxWidth: 300, height: 'auto' }} />
-          </FadeIn>
-        </div>
+      <section className="hr-section" style={{ padding: '144px 79px 96px', maxWidth: 1440, margin: '0 auto' }}>
+        <FadeIn direction="right">
+          <div className="hr-charlas-intro" style={{ display: 'flex', alignItems: 'center', gap: 48, marginBottom: 56 }}>
+            <Image src="/images/charlas/Logo-ENTRE-CHARLAS 2.png" alt="Entre Charlas" width={300} height={190} style={{ width: '100%', maxWidth: 260, height: 'auto', flexShrink: 0 }} />
+            <p style={{ fontFamily: 'var(--font)', fontWeight: 400, fontSize: 20, lineHeight: '28px', color: 'var(--black)', maxWidth: 560 }}>
+              Un espacio para conversar, compartir ideas y descubrir nuevas miradas sobre arquitectura, desarrollo inmobiliario y todo lo que nos inspira.
+            </p>
+          </div>
+        </FadeIn>
 
         <div className="hr-charlas-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '40px 32px' }}>
           {loading && Array.from({ length: 3 }).map((_, i) => (
@@ -83,6 +86,8 @@ export default function Blog() {
         .hr-blog-card:hover .hr-blog-arrow { transform: translateX(3px); }
         @media (max-width: 900px) {
           .hr-section { padding: 120px 20px 64px !important; }
+          .hr-charlas-intro { flex-direction: column !important; align-items: flex-start !important; gap: 24px !important; }
+          .hr-charlas-intro p { font-size: 17px !important; line-height: 24px !important; }
           .hr-charlas-grid { grid-template-columns: 1fr 1fr !important; gap: 24px !important; }
         }
         @media (max-width: 600px) {
