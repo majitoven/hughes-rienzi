@@ -28,6 +28,7 @@ function CountUp({ value, style }: { value: string; style?: React.CSSProperties 
   const digits = match && !grouped ? match[1].length : 0;
   const suffix = match ? match[2] : value;
   const [display, setDisplay] = useState(0);
+  const [visible, setVisible] = useState(false);
   const ref = useRef<HTMLParagraphElement>(null);
   const started = useRef(false);
 
@@ -37,11 +38,13 @@ function CountUp({ value, style }: { value: string; style?: React.CSSProperties 
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting && !started.current) {
         started.current = true;
-        const duration = 1200;
+        setVisible(true);
+        const duration = 1600;
         const start = performance.now();
         const tick = (now: number) => {
           const progress = Math.min((now - start) / duration, 1);
-          setDisplay(Math.round(progress * target));
+          // ease-out so the count slows down as it reaches the final value
+          setDisplay(Math.round((1 - Math.pow(1 - progress, 3)) * target));
           if (progress < 1) requestAnimationFrame(tick);
         };
         requestAnimationFrame(tick);
@@ -53,7 +56,12 @@ function CountUp({ value, style }: { value: string; style?: React.CSSProperties 
   }, [target, match]);
 
   const formatted = grouped ? display.toLocaleString('de-DE') : String(display).padStart(digits, '0');
-  return <p ref={ref} style={style}>{match ? `${formatted}${suffix}` : suffix}</p>;
+  return (
+    <p ref={ref} style={{
+      ...style, whiteSpace: 'nowrap', fontVariantNumeric: 'tabular-nums',
+      opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateY(12px)', transition: 'opacity 0.8s ease, transform 0.8s ease',
+    }}>{match ? `${formatted}${suffix}` : suffix}</p>
+  );
 }
 
 // Logos have very different aspect ratios; sizing them to a constant area
@@ -194,7 +202,7 @@ export default function Home() {
       </section>
 
       {/* Stats */}
-      <section className="hr-section hr-stats" style={{ padding: '24px 64px 120px 64px', maxWidth: 1300, margin: '0 auto', textAlign: 'center' }}>
+      <section className="hr-section hr-stats" style={{ padding: '24px 64px 120px 64px', maxWidth: 1440, margin: '0 auto', textAlign: 'center' }}>
         <FadeIn>
           <h2 className="hr-stats-title" style={{ fontFamily: 'var(--font)', fontWeight: 500, fontSize: 50, lineHeight: '54px', maxWidth: 900, margin: '0 auto 20px' }}>
             MÁS DE 20 AÑOS CREANDO PROYECTOS PARA VIVIR MEJOR
@@ -203,12 +211,13 @@ export default function Home() {
             En Grupo Hughes &amp; Rienzi buscamos generar emprendimientos con una personalidad única, que aporten características novedosas al mercado, contribuyan al desarrollo urbano, promuevan una mayor calidad de vida para sus residentes y ofrezcan oportunidades que resulten confiables a la hora de invertir.
           </p>
         </FadeIn>
-        <div className="hr-stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 20 }}>
+        <div className="hr-stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: 20 }}>
           {STATS.map(s => (
             <FadeIn key={s.label}>
-              <div className="hr-stat-card" style={{ background: '#F5F5F5', borderRadius: 20, padding: '32px 24px', textAlign: 'left', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', height: 340 }}>
-                <p style={{ fontFamily: 'var(--font)', fontWeight: 400, fontSize: 18, lineHeight: '24px', color: 'var(--black)', marginBottom: 20 }}>{s.label}</p>
-                <CountUp value={s.value} style={{ fontFamily: 'var(--font)', fontWeight: 500, fontSize: 68 }} />
+              <div className="hr-stat-card" style={{ containerType: 'inline-size', background: '#F5F5F5', borderRadius: 20, padding: '32px 24px', textAlign: 'left', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', height: 400 }}>
+                <p style={{ fontFamily: 'var(--font)', fontWeight: 400, fontSize: 18, lineHeight: '24px', color: 'var(--black)', marginBottom: 4 }}>{s.label}</p>
+                {/* Sized to the card (cqi) so the longest figure, 76.000+, fits without pushing the grid column wider */}
+                <CountUp value={s.value} style={{ fontFamily: 'var(--font)', fontWeight: 500, fontSize: 'min(90px, 24.5cqi)', letterSpacing: '-0.03em', lineHeight: 1.05 }} />
               </div>
             </FadeIn>
           ))}
@@ -256,7 +265,7 @@ export default function Home() {
           .hr-featured-grid { grid-template-columns: 1fr !important; }
           .hr-stats-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
           .hr-stat-card { height: auto !important; min-height: 150px; padding: 24px !important; }
-          .hr-stat-card p:last-child { font-size: 52px !important; }
+          .hr-stat-card p:last-child { font-size: 60px !important; }
           .hr-featured-logo { height: calc(var(--logo-h) * 0.7) !important; }
           .hr-card-location { top: 16px !important; right: 12px !important; padding: 4px 8px !important; font-size: 11px !important; max-width: 45%; }
           .hr-card-arrow { bottom: 14px !important; right: 14px !important; }
