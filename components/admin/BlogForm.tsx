@@ -76,7 +76,9 @@ export default function BlogForm({ initialData, postId, onSave, saving }: Props)
 
   const [fileError, setFileError] = useState('');
 
-  const folder = () => postId ?? `temp_${Date.now().toString().slice(-6)}`;
+  // One temp folder per form session, so every file of a new item ends up together in Storage
+  const [tempFolder] = useState(() => `temp_${Date.now().toString(36)}`);
+  const folder = () => postId ?? tempFolder;
 
   const handleCoverUpload = async (file: File) => {
     setFileError('');

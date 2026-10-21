@@ -35,7 +35,7 @@ export default function Navbar() {
       <nav className="hr-nav" style={{
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50,
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        padding: '6px 48px',
+        padding: '21px 48px',
         background: dark ? '#fff' : (scrolled ? 'rgba(20,20,20,0.92)' : 'transparent'),
         backdropFilter: !dark && scrolled ? 'blur(12px)' : 'none',
         transition: 'background 0.4s',
@@ -43,9 +43,9 @@ export default function Navbar() {
         {dark && <div className="hr-nav-divider" style={{ position: 'absolute', bottom: 0, left: 48, right: 48, height: 1, background: 'var(--black)' }} />}
         <Link href="/" style={{ display: 'flex' }} aria-label="Grupo Hughes & Rienzi">
           <Image
-            src={dark ? '/images/home/Logo_GRUPO_BLANCOseccionitau.png' : '/images/home/logoheader.png'}
-            alt="Grupo Hughes & Rienzi" width={135} height={137} className="hr-nav-logo"
-            style={{ width: 'auto', height: 90 }} priority />
+            src={dark ? '/images/home/logo-dark-nav.png' : '/images/home/logoheader-nav.png'}
+            alt="Grupo Hughes & Rienzi" width={322} height={272} className="hr-nav-logo"
+            style={{ width: 'auto', height: 60 }} priority />
           {/* Mobile shows the short GHR mark instead of the full logo */}
           <Image src="/images/home/GHRlogo.svg" alt="GHR" width={194} height={83} className="hr-nav-logo-mobile"
             style={{ display: 'none', width: 'auto', height: 30, filter: dark ? 'none' : 'invert(1)' }} priority />

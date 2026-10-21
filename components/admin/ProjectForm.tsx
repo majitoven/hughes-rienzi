@@ -142,7 +142,9 @@ export default function ProjectForm({ initialData, projectId, onSave, saving }: 
 
   const [fileError, setFileError] = useState('');
 
-  const folder = () => projectId ?? `temp_${Date.now().toString().slice(-6)}`;
+  // One temp folder per form session, so every file of a new item ends up together in Storage
+  const [tempFolder] = useState(() => `temp_${Date.now().toString(36)}`);
+  const folder = () => projectId ?? tempFolder;
 
   const handleCoverUpload = async (file: File) => {
     setFileError('');
