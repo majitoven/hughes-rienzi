@@ -4,10 +4,10 @@ import { getDoc, doc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { BlogPost } from '@/lib/types';
 import { FALLBACK_BLOG } from '@/lib/fallbackBlog';
-import Image from 'next/image';
 import FadeIn from '@/components/FadeIn';
 import Footer from '@/components/Footer';
 import Skeleton from '@/components/Skeleton';
+import SkeletonImage from '@/components/SkeletonImage';
 import ArrowButton from '@/components/ArrowButton';
 
 function isVideoUrl(url: string) {
@@ -68,7 +68,7 @@ export default function BlogPostDetalle({ params }: { params: Promise<{ id: stri
         {post.coverImage && (
           <FadeIn>
             <div style={{ position: 'relative', width: '100%', aspectRatio: '4 / 3', overflow: 'hidden', marginBottom: 40 }}>
-              <Image src={post.coverImage} alt={post.title} fill style={{ objectFit: 'cover' }} />
+              <SkeletonImage src={post.coverImage} alt={post.title} sizes="(max-width: 1000px) 100vw, 840px" priority />
             </div>
           </FadeIn>
         )}
@@ -103,7 +103,7 @@ export default function BlogPostDetalle({ params }: { params: Promise<{ id: stri
               <div key={i} style={{ position: 'relative', width: '100%', aspectRatio: '4 / 3',  overflow: 'hidden' }}>
                 {isVideoUrl(url)
                   ? <video src={url} controls style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  : <Image src={url} alt="" fill style={{ objectFit: 'cover' }} />
+                  : <SkeletonImage src={url} alt="" sizes="(max-width: 900px) 100vw, 420px" />
                 }
               </div>
             ))}

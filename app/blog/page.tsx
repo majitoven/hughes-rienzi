@@ -9,6 +9,7 @@ import Image from 'next/image';
 import FadeIn from '@/components/FadeIn';
 import Footer from '@/components/Footer';
 import Skeleton from '@/components/Skeleton';
+import SkeletonImage from '@/components/SkeletonImage';
 
 function GrayArrow() {
   return (
@@ -59,7 +60,7 @@ export default function Blog() {
               <Link href={`/blog/${p.id}`} className="hr-blog-card" style={{ display: 'block' }}>
                 <div style={{ position: 'relative', width: '100%', aspectRatio: '405.54 / 297.42', overflow: 'hidden', marginBottom: 16 }}>
                   <div style={{ position: 'absolute', inset: 0, transition: 'transform 0.4s ease' }} className="hr-blog-card-image">
-                    <Image src={p.coverImage} alt={p.title} fill style={{ objectFit: 'cover' }} />
+                    <SkeletonImage src={p.coverImage} alt={p.title} sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw" />
                   </div>
                   <div className="hr-blog-card-overlay" style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.25)', opacity: 0, transition: 'opacity 0.4s ease' }} />
                 </div>
