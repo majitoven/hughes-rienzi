@@ -1,13 +1,22 @@
-import Image from "next/image";
+import Image, { getImageProps } from "next/image";
 import FadeIn from "@/components/FadeIn";
 import Footer from "@/components/Footer";
 
 export default function Nosotros() {
+  // Art direction: separate photos for desktop and mobile
+  const common = { alt: "Desarrollar con identidad.", sizes: "100vw", fill: true, priority: true };
+  const { props: { srcSet: heroDesktop } } = getImageProps({ ...common, src: "/images/nosotros/hero-desktop.jpg" });
+  const { props: { srcSet: heroMobile, ...heroRest } } = getImageProps({ ...common, src: "/images/nosotros/hero-mobile.jpg" });
   return (
     <main style={{ background: "#fff" }}>
       {/* Hero */}
       <section style={{ position: "relative", width: "100%", height: "100vh", minHeight: 560 }}>
-        <Image src="/images/nosotros/hero.png" alt="Desarrollar con identidad." fill priority sizes="100vw" className="hr-nosotros-hero-img" style={{ objectFit: "cover" }} />
+        <picture>
+          <source media="(min-width: 901px)" srcSet={heroDesktop} />
+          <source media="(max-width: 900px)" srcSet={heroMobile} />
+          {/* eslint-disable-next-line jsx-a11y/alt-text -- alt comes from getImageProps */}
+          <img {...heroRest} style={{ ...heroRest.style, objectFit: "cover" }} />
+        </picture>
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.3) 100%)" }} />
         <div style={{ position: "relative", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
           <FadeIn>
@@ -65,8 +74,6 @@ export default function Nosotros() {
       <style>{`
         @media (max-width: 900px) {
           .hr-nosotros-hero-title { font-size: 34px !important; line-height: 38px !important; }
-          /* Crop to the trees on the right so the building in the background doesn't take over */
-          .hr-nosotros-hero-img { object-position: 92% 50% !important; }
           .hr-nosotros-title { font-size: 30px !important; line-height: 36px !important; }
           .hr-nosotros-grid { grid-template-columns: 1fr !important; gap: 32px !important; }
           .hr-nosotros-grid p { font-size: 16px !important; line-height: 24px !important; }

@@ -68,10 +68,11 @@ export default function Footer({ minimal = false }: { minimal?: boolean }) {
 
           {/* Row 1: GHR logo <-> H&R Bienes Raíces */}
           <div className="footer-top-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 24, marginBottom: 32 }}>
-            <Image src="/images/home/GHRlogo.svg" alt="GHR" width={170} height={73} style={{ objectFit: 'contain' }} />
-            <div className="footer-comercializa" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8 }}>
+            <Image src="/images/home/GHRlogo.svg" alt="GHR" width={170} height={73} className="footer-ghr" style={{ objectFit: 'contain' }} />
+            <a href="https://hr.com.uy/" target="_blank" rel="noopener noreferrer" className="footer-comercializa hr-footer-contact"
+              aria-label="Hughes & Rienzi Bienes Raíces" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8 }}>
               <Image src="/images/home/logohughesfooter.svg" alt="Hughes & Rienzi Bienes Raíces" width={200} height={57} style={{ objectFit: 'contain' }} />
-            </div>
+            </a>
           </div>
 
           {/* Row 2: contacto <-> newsletter <-> redes */}
@@ -89,7 +90,7 @@ export default function Footer({ minimal = false }: { minimal?: boolean }) {
               </p>
             </div>
 
-            <form onSubmit={handleSubscribe} style={{ textAlign: 'center', width: 280 }}>
+            <form onSubmit={handleSubscribe} className="footer-newsletter" style={{ textAlign: 'center', width: 280 }}>
               <p style={{ fontFamily: 'var(--font)', fontWeight: 500, fontSize: 14, color: 'var(--black)', marginBottom: 8 }}>
                 Suscribite a nuestra newsletter
               </p>
@@ -97,11 +98,11 @@ export default function Footer({ minimal = false }: { minimal?: boolean }) {
                 <p style={{ fontFamily: 'var(--font)', fontSize: 13, color: 'var(--black)' }}>¡Gracias por suscribirte!</p>
               ) : (
                 <>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, border: '1px solid var(--black)', borderRadius: 999, padding: '8px 8px 8px 20px' }}>
+                  <div className="footer-newsletter-field" style={{ display: 'flex', alignItems: 'center', gap: 8, border: '1px solid var(--black)', borderRadius: 999, padding: '8px 8px 8px 20px' }}>
                     <input type="email" required placeholder="nombre@mail.com" value={email}
                       onChange={e => setEmail(e.target.value)}
                       style={{ flex: 1, background: 'transparent', border: 'none', outline: 'none', color: 'var(--black)', fontFamily: 'var(--font)', fontSize: 14, minWidth: 0 }} />
-                    <button type="submit" aria-label="Suscribirse" disabled={subscribing} style={{
+                    <button type="submit" aria-label="Suscribirse" disabled={subscribing} className="footer-newsletter-btn" style={{
                       width: 32, height: 32, borderRadius: '50%', background: 'var(--black)', flexShrink: 0,
                       display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', cursor: 'pointer', padding: 0,
                       opacity: subscribing ? 0.6 : 1,
@@ -129,7 +130,7 @@ export default function Footer({ minimal = false }: { minimal?: boolean }) {
       </div>
 
       <div style={{ background: 'var(--black)', padding: '16px 24px' }}>
-        <p style={{ textAlign: 'center', fontSize: 11, color: 'rgba(255,255,255,0.6)' }}>
+        <p className="footer-copyright" style={{ textAlign: 'center', fontSize: 11, color: 'rgba(255,255,255,0.6)' }}>
           © Copyright Grupo Hughes &amp; Rienzi 2026
         </p>
       </div>
@@ -141,17 +142,29 @@ export default function Footer({ minimal = false }: { minimal?: boolean }) {
         .hr-footer-social:hover .hr-footer-social-arrow { transform: scale(1.15) rotate(45deg); background: var(--black); border-color: var(--black); }
         .hr-footer-social:hover .hr-footer-social-arrow-img { filter: invert(1); }
         @media (max-width: 768px) {
-          /* The project logos strip is unreadable at phone size */
+          /* Mobile footer (Figma "PIE MOBILE"): only the H&R logo, everything left-aligned,
+             order: logo, contact, address, socials, newsletter */
           .hr-proyectos-section { display: none !important; }
-          .footer-inner { padding: 32px 20px 24px !important; }
-          .footer-inner > div { padding-top: 32px !important; }
-          .footer-top-row { flex-direction: column !important; gap: 16px !important; align-items: center !important; margin-bottom: 24px !important; }
-          .footer-top-row img { width: auto !important; height: 36px !important; }
-          .footer-comercializa { align-items: center !important; }
-          .footer-bottom-row { grid-template-columns: 1fr !important; gap: 24px !important; justify-items: center; text-align: center; }
-          .footer-bottom-row p { font-size: 13px !important; line-height: 20px !important; }
-          .footer-bottom-row form { width: 100% !important; max-width: 280px; }
-          .footer-socials { flex-direction: row !important; align-items: center !important; gap: 20px !important; }
+          .footer-inner { padding: 32px 24px 32px !important; }
+          .footer-inner > div { padding-top: 40px !important; }
+          .footer-ghr { display: none !important; }
+          .footer-top-row { justify-content: flex-start !important; margin-bottom: 32px !important; }
+          .footer-comercializa { align-items: flex-start !important; }
+          /* the SVG has ~12% empty space on its left edge; pull it back so it lines up with the text */
+          .footer-comercializa img { width: auto !important; height: 44px !important; margin-left: -19px; }
+          .footer-bottom-row { display: flex !important; flex-direction: column !important; align-items: flex-start !important; gap: 32px !important; text-align: left; }
+          .footer-top-row, .footer-bottom-row { padding-left: 18px; }
+          .footer-bottom-row { gap: 40px !important; }
+          .footer-bottom-row p, .footer-bottom-row a, .footer-bottom-row input { font-size: 11px !important; line-height: 17px !important; font-weight: 300 !important; letter-spacing: -0.01em; }
+          .footer-bottom-row > div:first-child p + p { margin-top: 20px !important; }
+          .footer-socials { order: 2; flex-direction: row !important; align-items: center !important; gap: 44px !important; }
+          .hr-footer-social { gap: 4px !important; }
+          .hr-footer-social-arrow { border-color: transparent !important; width: 12px !important; height: 12px !important; }
+          .footer-newsletter { order: 3; text-align: left !important; width: 100% !important; max-width: 176px; }
+          .footer-newsletter > p { font-weight: 400 !important; margin-bottom: 10px !important; }
+          .footer-newsletter-field { padding: 3px 3px 3px 14px !important; }
+          .footer-newsletter-btn { width: 24px !important; height: 24px !important; }
+          .footer-copyright { font-size: 10px !important; }
         }
       `}</style>
     </footer>

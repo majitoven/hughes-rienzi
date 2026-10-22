@@ -166,7 +166,7 @@ function ContentBlock({ block, title, cta }: { block: ProjectBlock; title: strin
                 {block.subtitle}
               </p>
             )}
-            {cta && <div style={{ marginTop: 40 }}>{cta}</div>}
+            {cta && <div className="hr-cta-inline" style={{ marginTop: 40 }}>{cta}</div>}
           </div>
           <div>
             <Paragraphs text={block.body} />
@@ -199,7 +199,7 @@ function ContentBlock({ block, title, cta }: { block: ProjectBlock; title: strin
               </h2>
             )}
             <Paragraphs text={block.body} />
-            {cta && <div style={{ marginTop: 20 }}>{cta}</div>}
+            {cta && <div className="hr-cta-inline" style={{ marginTop: 20 }}>{cta}</div>}
           </div>
           <div style={{ paddingTop: block.headline ? 12 : 0 }}>
             <p style={{ fontFamily: 'var(--font)', fontWeight: 400, fontSize: 29, color: 'var(--black)', textTransform: 'uppercase', marginBottom: 12 }}>
@@ -327,7 +327,7 @@ export default function ProyectoDetalle({ params }: { params: Promise<{ id: stri
         {project.facts.length > 0 && (
           <div className="hr-project-facts" style={{ position: 'absolute', left: 0, right: 0, bottom: 56, paddingLeft: 79, display: 'flex', flexWrap: 'nowrap', justifyContent: 'space-between', gap: 24, color: '#fff', width: 'calc(70% + 79px)', maxWidth: '100%', boxSizing: 'border-box' }}>
             {project.facts.map(f => (
-              <p key={f.id} style={{ fontFamily: 'var(--font)', fontSize: 15, lineHeight: '20px', whiteSpace: 'nowrap' }}>
+              <p key={f.id} className={/^a[ñn]o$/i.test(f.label.trim()) ? 'hr-fact-year' : undefined} style={{ fontFamily: 'var(--font)', fontSize: 15, lineHeight: '20px', whiteSpace: 'nowrap' }}>
                 <span style={{ fontWeight: 600 }}>{f.label}</span>
                 <span style={{ fontWeight: 300, marginLeft: 8, opacity: 0.9 }}>{f.value}</span>
               </p>
@@ -349,7 +349,7 @@ export default function ProyectoDetalle({ params }: { params: Promise<{ id: stri
         ))}
 
         {(brochureIndex === -1 && brochureButton) || (websiteIndex === -1 && websiteButton) ? (
-          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', paddingTop: 24 }}>
+          <div className="hr-cta-inline" style={{ display: 'flex', gap: 16, flexWrap: 'wrap', paddingTop: 24 }}>
             {brochureIndex === -1 && brochureButton}
             {websiteIndex === -1 && websiteButton}
           </div>
@@ -370,6 +370,14 @@ export default function ProyectoDetalle({ params }: { params: Promise<{ id: stri
               )}
             </div>
           </FadeIn>
+        )}
+
+        {/* Mobile only: brochure + website together after the map (desktop shows them next to their text blocks) */}
+        {(brochureButton || websiteButton) && (
+          <div className="hr-cta-bottom" style={{ display: 'none' }}>
+            {brochureButton}
+            {websiteButton}
+          </div>
         )}
       </section>
 
@@ -397,6 +405,9 @@ export default function ProyectoDetalle({ params }: { params: Promise<{ id: stri
           .hr-gallery-arrow[aria-label^="Fotos"] { width: 32px; height: 32px; }
           .hr-lightbox { padding: 56px 12px !important; }
           .hr-project-map { aspect-ratio: 4 / 3 !important; }
+          .hr-cta-inline { display: none !important; }
+          .hr-cta-bottom { display: flex !important; flex-direction: column; align-items: center; gap: 12px; padding-top: 12px; }
+          .hr-fact-year { order: 99; }
         }
       `}</style>
     </main>
