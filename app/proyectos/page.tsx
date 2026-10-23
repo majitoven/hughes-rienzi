@@ -9,7 +9,7 @@ import Image from 'next/image';
 import FadeIn from '@/components/FadeIn';
 import Skeleton from '@/components/Skeleton';
 
-const TABS = ['Todos', 'Lanzamiento', 'Construcción', 'Estrenar'];
+const TABS = ['Todos', 'Lanzamiento', 'Construcción', 'Estrenar', 'Finalizado'];
 
 export default function Proyectos() {
   const [projects, setProjects] = useState<Project[] | null>(null);
@@ -98,10 +98,8 @@ export default function Proyectos() {
         @media (max-width: 900px) {
           .hr-section { padding: 100px 20px 64px !important; }
           .hr-proyectos-grid { grid-template-columns: 1fr !important; gap: 32px !important; }
-          .hr-proyectos-tabs {
-            gap: 18px !important; overflow-x: auto !important; flex-wrap: nowrap !important;
-            -webkit-overflow-scrolling: touch; padding-bottom: 4px;
-          }
+          /* 5 tabs don't fit in one row at phone width; wrap instead of a hidden horizontal scroll */
+          .hr-proyectos-tabs { gap: 10px 20px !important; flex-wrap: wrap !important; }
           .hr-proyectos-tabs button { font-size: 14px !important; }
           .hr-proyecto-card-title { font-size: 22px !important; line-height: 26px !important; }
           .hr-proyecto-card-location { font-size: 14px !important; }

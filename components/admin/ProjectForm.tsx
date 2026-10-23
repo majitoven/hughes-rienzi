@@ -345,6 +345,7 @@ export default function ProjectForm({ initialData, projectId, onSave, saving }: 
               <option value="Lanzamiento">Lanzamiento</option>
               <option value="Construcción">Construcción</option>
               <option value="Estrenar">Estrenar</option>
+              <option value="Finalizado">Finalizado</option>
             </select>
           </div>
           <div>
