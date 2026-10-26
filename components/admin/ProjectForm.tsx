@@ -170,6 +170,11 @@ export default function ProjectForm({ initialData, projectId, onSave, saving }: 
 
   const handleLogoUpload = async (file: File) => {
     setFileError('');
+    // JPG has no transparency: the logo would show up on a solid (often black) box over the photos
+    if (!/^image\/(png|webp|svg\+xml)$/.test(file.type)) {
+      setFileError(`"${file.name}" no es PNG: los JPG no tienen fondo transparente y el logo se vería con un recuadro de color. Subí el logo en PNG con fondo transparente (si te lo mandaron por WhatsApp, pedí que lo envíen como documento, no como foto).`);
+      return;
+    }
     const err = validateFile(file);
     if (err) { setFileError(err); return; }
     setLogoUploading(true);
@@ -454,7 +459,7 @@ export default function ProjectForm({ initialData, projectId, onSave, saving }: 
           </div>
         )}
         <label style={labelStyle}>Subir imagen</label>
-        <input type="file" accept="image/*"
+        <input type="file" accept="image/png,image/webp,image/svg+xml"
           onChange={e => { const file = e.target.files?.[0]; if (file) handleLogoUpload(file); }}
           style={{ ...inputStyle, padding: '8px 14px', cursor: 'pointer' }} />
         {logoUploading && (
