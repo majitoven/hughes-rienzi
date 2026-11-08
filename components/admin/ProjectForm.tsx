@@ -282,6 +282,36 @@ export default function ProjectForm({ initialData, projectId, onSave, saving }: 
     updateBlock(i, { images: (block.images ?? []).filter((_, j) => j !== imgIdx) });
   };
 
+  // Reorder photos inside a block by dragging the thumbnails. stopPropagation keeps the
+  // surrounding block (which is draggable itself) from being moved at the same time.
+  const dragImage = useRef<{ block: number; idx: number } | null>(null);
+  const [draggingImage, setDraggingImage] = useState<{ block: number; idx: number } | null>(null);
+  const onImageDragStart = (e: React.DragEvent, i: number, imgIdx: number) => {
+    e.stopPropagation();
+    e.dataTransfer.effectAllowed = 'move';
+    dragImage.current = { block: i, idx: imgIdx };
+    setDraggingImage({ block: i, idx: imgIdx });
+  };
+  const onImageDragOver = (e: React.DragEvent, i: number, imgIdx: number) => {
+    const from = dragImage.current;
+    if (!from || from.block !== i) return;
+    e.preventDefault();
+    e.stopPropagation();
+    if (from.idx === imgIdx) return;
+    const imgs = [...(blocks[i].images ?? [])];
+    const [moved] = imgs.splice(from.idx, 1);
+    imgs.splice(imgIdx, 0, moved);
+    updateBlock(i, { images: imgs });
+    dragImage.current = { block: i, idx: imgIdx };
+    setDraggingImage({ block: i, idx: imgIdx });
+  };
+  const onImageDragEnd = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragImage.current = null;
+    setDraggingImage(null);
+  };
+
   const dragBlockIndex = useRef<number | null>(null);
   const onBlockDragStart = (i: number) => { dragBlockIndex.current = i; };
   const onBlockDragOver = (e: React.DragEvent, i: number) => {
@@ -697,6 +727,7 @@ export default function ProjectForm({ initialData, projectId, onSave, saving }: 
                     {block.type === 'gallery'
                       ? 'Subí todas las fotos que quieras. Se muestran de a 3 en un carrusel y al hacer click se agrandan.'
                       : 'Subí 2 fotos. Se muestran finas y lado a lado, como separador entre secciones.'}
+                    {(block.images?.length ?? 0) > 1 && ' Arrastrá las fotos para cambiar el orden en que aparecen.'}
                   </p>
                   {(block.images?.length ?? 0) > 0 && (
                     <div style={{
@@ -705,11 +736,28 @@ export default function ProjectForm({ initialData, projectId, onSave, saving }: 
                       gap: 10, marginBottom: 10,
                     }}>
                       {block.images!.map((url, imgIdx) => (
-                        <div key={imgIdx} style={{ position: 'relative', borderRadius: 8, overflow: 'hidden', aspectRatio: '4/3', background: '#f0f0f0' }}>
+                        // key follows the photo (not its position) so the dragged element survives the reorder
+                        <div key={`${url}#${block.images!.slice(0, imgIdx).filter(u => u === url).length}`}
+                          draggable
+                          onDragStart={e => onImageDragStart(e, i, imgIdx)}
+                          onDragOver={e => onImageDragOver(e, i, imgIdx)}
+                          onDrop={onImageDragEnd}
+                          onDragEnd={onImageDragEnd}
+                          title="Arrastrá para cambiar el orden"
+                          style={{
+                            position: 'relative', borderRadius: 8, overflow: 'hidden', aspectRatio: '4/3', background: '#f0f0f0', cursor: 'grab',
+                            opacity: draggingImage?.block === i && draggingImage.idx === imgIdx ? 0.4 : 1,
+                            outline: draggingImage?.block === i && draggingImage.idx === imgIdx ? '2px dashed var(--black)' : 'none',
+                            transition: 'opacity 0.15s',
+                          }}>
                           {isVideoUrl(url)
-                            ? <video src={url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} muted />
-                            : <img src={url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                            ? <video src={url} style={{ width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none' }} muted />
+                            : <img src={url} alt="" draggable={false} style={{ width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none' }} />
                           }
+                          <span style={{
+                            position: 'absolute', top: 4, left: 4, background: 'rgba(0,0,0,0.6)', color: '#fff',
+                            borderRadius: 6, padding: '2px 8px', fontSize: 11, fontFamily: 'var(--font)', pointerEvents: 'none',
+                          }}>{imgIdx + 1}</span>
                           <button type="button" onClick={() => removeBlockImage(i, imgIdx)} style={{
                             position: 'absolute', top: 4, right: 4, background: 'rgba(0,0,0,0.6)', border: 'none',
                             color: '#fff', borderRadius: 6, padding: '2px 8px', cursor: 'pointer', fontSize: 12,
