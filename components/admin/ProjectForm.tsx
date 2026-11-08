@@ -533,7 +533,7 @@ export default function ProjectForm({ initialData, projectId, onSave, saving }: 
       <div style={sectionStyle}>
         <SectionTitle>Mapa de ubicación (opcional)</SectionTitle>
         <p style={{ ...f, fontSize: 12, color: 'rgba(20,20,20,0.4)', marginBottom: 16 }}>
-          Imagen del mapa que se muestra al final de la página, arriba del botón &quot;Ver en Google Maps&quot;. Formato apaisado (aprox. 920 × 335).
+          Si lo dejás vacío, al final de la página se muestra el mapa de Google Maps (según el &quot;Link de Google Maps&quot;). Si subís una imagen (por ejemplo, el mapa del brochure), <strong style={{ fontWeight: 600 }}>reemplaza</strong> al de Google Maps. Formato apaisado (aprox. 920 × 335). Para volver a Google Maps, quitá la imagen con la ✕.
         </p>
         {mapImage && (
           <div style={{ marginBottom: 16, borderRadius: 8, overflow: 'hidden', height: 140, background: '#f0f0f0', position: 'relative' }}>
